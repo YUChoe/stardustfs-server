@@ -17,7 +17,7 @@ class SyncService:
         self.db = db
 
     async def upload_metadata(self, user_id: str, blob: bytes) -> int:
-        """메타데이터 blob 저장, version 증가. 새 version 반환."""
+        """메타데이터 blob 저장 (user_id당 1개만 유지, upsert). 새 version 반환."""
         # 현재 최대 version 조회
         cursor = await self.db.execute(
             "SELECT MAX(version) as max_ver FROM metadata_backups WHERE user_id = ?",
@@ -27,6 +27,11 @@ class SyncService:
         current_version = row["max_ver"] if row["max_ver"] is not None else 0
         new_version = current_version + 1
 
+        # user_id당 1개만 유지: 기존 행 삭제 후 삽입
+        await self.db.execute(
+            "DELETE FROM metadata_backups WHERE user_id = ?",
+            (user_id,),
+        )
         await self.db.execute(
             "INSERT INTO metadata_backups (user_id, encrypted_blob, version) "
             "VALUES (?, ?, ?)",

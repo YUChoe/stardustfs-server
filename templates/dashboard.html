@@ -120,7 +120,10 @@
                 container.innerHTML = '<p class="empty">{{ t.no_devices }}</p>';
                 return;
             }
-            container.innerHTML = devices.map(d => `
+            container.innerHTML = devices.map(d => {
+                const hbDate = new Date(d.last_heartbeat + 'Z');
+                const hbLocal = hbDate.toLocaleString();
+                return `
                 <div class="device-item">
                     <div class="device-info">
                         <span class="device-name">${escapeHtml(d.name)}</span>
@@ -128,10 +131,11 @@
                         <span class="device-status ${d.is_online ? 'online' : 'offline'}">
                             ${d.is_online ? '{{ t.status_online }}' : '{{ t.status_offline }}'}
                         </span>
+                        <span class="device-hb">{{ t.last_heartbeat }}: ${hbLocal}</span>
                     </div>
                     <button class="btn btn-small btn-danger" onclick="deleteDevice('${d.id}')">{{ t.btn_remove }}</button>
                 </div>
-            `).join('');
+            `}).join('');
         } else {
             container.innerHTML = '<p class="error-msg">{{ t.load_error }}</p>';
         }
@@ -167,7 +171,9 @@
         if (resp.ok) {
             const data = await resp.json();
             if (data.uploaded_at) {
-                el.textContent = '{{ t.metadata_last_sync }}: ' + data.uploaded_at + ' (v' + data.version + ')';
+                const utcDate = new Date(data.uploaded_at + 'Z');
+                const localStr = utcDate.toLocaleString();
+                el.textContent = '{{ t.metadata_last_sync }}: ' + localStr + ' (v' + data.version + ')';
             } else {
                 el.textContent = '{{ t.metadata_never }}';
             }

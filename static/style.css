@@ -492,6 +492,11 @@ footer {
   color: #f85149;
 }
 
+.device-hb {
+  color: #6e7681;
+  font-size: 0.8rem;
+}
+
 .btn-small {
   padding: 0.35rem 0.75rem;
   font-size: 0.8rem;

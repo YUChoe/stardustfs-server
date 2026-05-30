@@ -21,23 +21,51 @@ class DeviceService:
     async def register_device(
         self, user_id: str, name: str, os: str, connection_address: str
     ) -> dict:
-        """디바이스 등록. is_online=True, last_heartbeat=now.
+        """디바이스 등록 (upsert). 같은 user_id+name+os면 기존 디바이스 갱신.
 
         Returns:
             dict with id, name, os, connection_address, is_online, last_heartbeat, created_at
         """
         now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-        cursor = await self.db.execute(
-            "INSERT INTO devices (user_id, name, os, connection_address, "
-            "last_heartbeat, is_online) "
-            "VALUES (?, ?, ?, ?, ?, 1) "
-            "RETURNING id, name, os, connection_address, is_online, last_heartbeat, created_at",
-            (user_id, name, os, connection_address, now),
-        )
-        row = await cursor.fetchone()
-        await self.db.commit()
 
-        logger.info(f"Device registered: {name} for user {user_id}")
+        # 같은 user_id + name + os 조합이 이미 존재하는지 확인
+        cursor = await self.db.execute(
+            "SELECT id FROM devices WHERE user_id = ? AND name = ? AND os = ?",
+            (user_id, name, os),
+        )
+        existing = await cursor.fetchone()
+
+        if existing is not None:
+            # 기존 디바이스 갱신
+            device_id = existing["id"]
+            await self.db.execute(
+                "UPDATE devices SET connection_address = ?, last_heartbeat = ?, "
+                "is_online = 1 WHERE id = ?",
+                (connection_address, now, device_id),
+            )
+            await self.db.commit()
+            logger.info(f"Device updated (upsert): {name} for user {user_id}")
+
+            cursor = await self.db.execute(
+                "SELECT id, name, os, connection_address, is_online, "
+                "last_heartbeat, created_at FROM devices WHERE id = ?",
+                (device_id,),
+            )
+            row = await cursor.fetchone()
+        else:
+            # 신규 디바이스 등록
+            cursor = await self.db.execute(
+                "INSERT INTO devices (user_id, name, os, connection_address, "
+                "last_heartbeat, is_online) "
+                "VALUES (?, ?, ?, ?, ?, 1) "
+                "RETURNING id, name, os, connection_address, is_online, "
+                "last_heartbeat, created_at",
+                (user_id, name, os, connection_address, now),
+            )
+            row = await cursor.fetchone()
+            await self.db.commit()
+            logger.info(f"Device registered: {name} for user {user_id}")
+
         return {
             "id": row["id"],
             "name": row["name"],

@@ -436,6 +436,12 @@ footer {
   font-size: 1.2rem;
 }
 
+.metadata-status {
+  color: #8b949e;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
 .devices-list .loading,
 .devices-list .empty {
   color: #8b949e;

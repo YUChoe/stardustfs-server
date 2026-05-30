@@ -109,6 +109,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "btn_remove": "Remove",
         "load_error": "Failed to load devices.",
         "confirm_delete": "Are you sure you want to remove this device?",
+        "metadata_last_sync": "Last metadata backup",
+        "metadata_never": "No metadata backup yet",
     },
     "ko": {
         "lang": "ko",
@@ -217,6 +219,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "btn_remove": "삭제",
         "load_error": "디바이스 목록을 불러오지 못했습니다.",
         "confirm_delete": "이 디바이스를 삭제하시겠습니까?",
+        "metadata_last_sync": "마지막 메타데이터 백업",
+        "metadata_never": "메타데이터 백업 없음",
     },
 }
 

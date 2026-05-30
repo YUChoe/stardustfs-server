@@ -45,6 +45,17 @@ async def download_metadata(
     )
 
 
+@router.get("/metadata/status")
+async def metadata_status(
+    current_user: dict = Depends(get_current_user),
+    db: aiosqlite.Connection = Depends(get_db),
+):
+    """메타데이터 백업 상태 조회 (version, uploaded_at)."""
+    service = SyncService(db)
+    status = await service.get_metadata_status(current_user["id"])
+    return status
+
+
 @router.put("/key", status_code=status.HTTP_200_OK)
 async def upload_key(
     request: Request,

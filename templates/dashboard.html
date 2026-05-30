@@ -28,6 +28,7 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h2>{{ t.devices_heading }}</h2>
+                        <p id="metadata-status" class="metadata-status"></p>
                     </div>
                     <div id="devices-list" class="devices-list">
                         <p class="loading">{{ t.loading }}</p>
@@ -159,6 +160,20 @@
         logout();
     });
 
+    async function loadMetadataStatus() {
+        const el = document.getElementById('metadata-status');
+        const resp = await apiFetch('/sync/metadata/status');
+        if (!resp) return;
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data.uploaded_at) {
+                el.textContent = '{{ t.metadata_last_sync }}: ' + data.uploaded_at + ' (v' + data.version + ')';
+            } else {
+                el.textContent = '{{ t.metadata_never }}';
+            }
+        }
+    }
+
     // 초기화
     (async () => {
         const token = getToken();
@@ -171,6 +186,7 @@
             document.getElementById('user-email').textContent = payload.sub;
         }
         await loadDevices();
+        await loadMetadataStatus();
     })();
     </script>
 </body>

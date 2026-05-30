@@ -58,6 +58,24 @@ class SyncService:
 
         return (bytes(row["encrypted_blob"]), row["version"])
 
+    async def get_metadata_status(self, user_id: str) -> dict:
+        """메타데이터 백업 상태 조회 (version, uploaded_at).
+
+        Returns:
+            dict with version, uploaded_at. 백업 없으면 None 값.
+        """
+        cursor = await self.db.execute(
+            "SELECT version, uploaded_at FROM metadata_backups "
+            "WHERE user_id = ? ORDER BY version DESC LIMIT 1",
+            (user_id,),
+        )
+        row = await cursor.fetchone()
+
+        if row is None:
+            return {"version": None, "uploaded_at": None}
+
+        return {"version": row["version"], "uploaded_at": row["uploaded_at"]}
+
     async def upload_key(self, user_id: str, blob: bytes) -> None:
         """암호화 키 blob 저장 (upsert)."""
         # SQLite upsert: INSERT OR REPLACE

@@ -1,0 +1,188 @@
+"""Internationalisation support for landing page."""
+from __future__ import annotations
+
+TRANSLATIONS: dict[str, dict[str, str]] = {
+    "en": {
+        "lang": "en-GB",
+        "title": "StardustFS - Your Files, Your Rules",
+        "nav_signin": "Sign In",
+        "nav_signup": "Sign Up",
+        "hero_heading": "Your Files. Your Devices. No Middleman.",
+        "hero_desc": "StardustFS syncs your files directly between your own devices with end-to-end encryption. No cloud storage. No third-party access. Just your data, where you need it.",
+        "hero_cta_start": "Get Started Free",
+        "hero_cta_signin": "Sign In",
+        "features_heading": "Why StardustFS?",
+        "feature_privacy_title": "Zero-Knowledge Privacy",
+        "feature_privacy_desc": "Your files are encrypted on your device before anything leaves it. We never see your data \u2014 not even the file names.",
+        "feature_p2p_title": "Peer-to-Peer Sync",
+        "feature_p2p_desc": "Files travel directly between your devices. No cloud servers storing your data means no data breaches, no surprise storage fees.",
+        "feature_multi_title": "Multi-Device Access",
+        "feature_multi_desc": "Register your laptop, desktop, and phone. Access your files from any of them, with real-time status and routing handled automatically.",
+        "feature_storage_title": "You Own Your Storage",
+        "feature_storage_desc": "Use the storage you already have. No monthly fees for space \u2014 your hard drives are your cloud.",
+        "comparison_heading": "StardustFS vs Dropbox",
+        "comparison_intro": "Traditional cloud storage uploads your files to someone else\u2019s servers. StardustFS keeps them on yours.",
+        "col_feature": "Feature",
+        "col_dropbox": "Dropbox",
+        "col_stardust": "StardustFS",
+        "cmp_storage_label": "Where files are stored",
+        "cmp_storage_dropbox": "Dropbox\u2019s cloud servers",
+        "cmp_storage_stardust": "Your own devices only",
+        "cmp_access_label": "Who can access your data",
+        "cmp_access_dropbox": "Dropbox (and potentially law enforcement)",
+        "cmp_access_stardust": "Only you",
+        "cmp_e2e_label": "End-to-end encryption",
+        "cmp_e2e_dropbox": "No (encrypted at rest, but Dropbox holds the keys)",
+        "cmp_e2e_stardust": "Yes (zero-knowledge)",
+        "cmp_transfer_label": "File transfer method",
+        "cmp_transfer_dropbox": "Upload to cloud, download from cloud",
+        "cmp_transfer_stardust": "Direct device-to-device",
+        "cmp_limit_label": "Storage limits",
+        "cmp_limit_dropbox": "2 GB free, then paid plans",
+        "cmp_limit_stardust": "Unlimited (your own disks)",
+        "cmp_cost_label": "Monthly cost for 2 TB",
+        "cmp_cost_dropbox": "\u00a39.99/month",
+        "cmp_cost_stardust": "Free",
+        "cmp_breach_label": "Data breach risk",
+        "cmp_breach_dropbox": "Centralised target",
+        "cmp_breach_stardust": "No central store to breach",
+        "cmp_offline_label": "Works offline",
+        "cmp_offline_dropbox": "Partial (synced files only)",
+        "cmp_offline_stardust": "Full access to local files",
+        "pricing_heading": "Simple Pricing",
+        "pricing_intro": "No storage fees. Ever. You bring the storage, we handle the sync.",
+        "plan_free": "Free",
+        "plan_pro": "Pro",
+        "plan_team": "Team",
+        "price_tbd": "TBD",
+        "plan_free_f1": "Up to 3 devices",
+        "plan_free_f2": "End-to-end encryption",
+        "plan_free_f3": "P2P file sync",
+        "plan_free_f4": "Encrypted metadata backup",
+        "plan_free_f5": "Community support",
+        "plan_pro_f1": "Unlimited devices",
+        "plan_pro_f2": "End-to-end encryption",
+        "plan_pro_f3": "P2P file sync",
+        "plan_pro_f4": "Encrypted metadata backup",
+        "plan_pro_f5": "Priority support",
+        "plan_pro_f6": "Advanced routing",
+        "plan_team_f1": "Unlimited devices per user",
+        "plan_team_f2": "End-to-end encryption",
+        "plan_team_f3": "P2P file sync",
+        "plan_team_f4": "Shared team folders",
+        "plan_team_f5": "Admin dashboard",
+        "plan_team_f6": "Dedicated support",
+        "btn_get_started": "Get Started",
+        "btn_free_trial": "Start Free Trial",
+        "btn_contact": "Contact Us",
+        "footer_copy": "\u00a9 2025 StardustFS. All rights reserved.",
+        "lang_switch_label": "한국어",
+        "lang_switch_code": "ko",
+    },
+    "ko": {
+        "lang": "ko",
+        "title": "StardustFS - 내 파일, 내 규칙",
+        "nav_signin": "로그인",
+        "nav_signup": "가입",
+        "hero_heading": "내 파일. 내 디바이스. 중간자 없음.",
+        "hero_desc": "StardustFS는 종단간 암호화로 내 디바이스끼리 직접 파일을 동기화합니다. 클라우드 저장소 없음. 제3자 접근 없음. 내 데이터가 필요한 곳에.",
+        "hero_cta_start": "무료로 시작하기",
+        "hero_cta_signin": "로그인",
+        "features_heading": "왜 StardustFS인가?",
+        "feature_privacy_title": "제로 지식 프라이버시",
+        "feature_privacy_desc": "파일은 디바이스에서 암호화된 후 전송됩니다. 파일 이름조차 서버에서 볼 수 없습니다.",
+        "feature_p2p_title": "P2P 동기화",
+        "feature_p2p_desc": "파일이 디바이스 간 직접 이동합니다. 클라우드 서버에 데이터를 저장하지 않으므로 유출 위험도, 추가 요금도 없습니다.",
+        "feature_multi_title": "멀티 디바이스 접근",
+        "feature_multi_desc": "노트북, 데스크톱, 스마트폰을 등록하세요. 어떤 기기에서든 파일에 접근할 수 있습니다.",
+        "feature_storage_title": "내 저장소를 활용",
+        "feature_storage_desc": "이미 가지고 있는 저장 공간을 사용하세요. 용량 요금 없이 내 하드 드라이브가 곧 클라우드입니다.",
+        "comparison_heading": "StardustFS vs Dropbox",
+        "comparison_intro": "기존 클라우드 저장소는 파일을 남의 서버에 올립니다. StardustFS는 내 디바이스에 둡니다.",
+        "col_feature": "항목",
+        "col_dropbox": "Dropbox",
+        "col_stardust": "StardustFS",
+        "cmp_storage_label": "파일 저장 위치",
+        "cmp_storage_dropbox": "Dropbox 클라우드 서버",
+        "cmp_storage_stardust": "내 디바이스에만 저장",
+        "cmp_access_label": "데이터 접근 가능자",
+        "cmp_access_dropbox": "Dropbox (및 법 집행 기관)",
+        "cmp_access_stardust": "오직 나만",
+        "cmp_e2e_label": "종단간 암호화",
+        "cmp_e2e_dropbox": "아니오 (저장 시 암호화하지만 키는 Dropbox가 보유)",
+        "cmp_e2e_stardust": "예 (제로 지식)",
+        "cmp_transfer_label": "파일 전송 방식",
+        "cmp_transfer_dropbox": "클라우드에 업로드 후 다운로드",
+        "cmp_transfer_stardust": "디바이스 간 직접 전송",
+        "cmp_limit_label": "저장 용량 제한",
+        "cmp_limit_dropbox": "무료 2GB, 이후 유료",
+        "cmp_limit_stardust": "무제한 (내 디스크 용량)",
+        "cmp_cost_label": "2TB 월 비용",
+        "cmp_cost_dropbox": "월 £9.99",
+        "cmp_cost_stardust": "무료",
+        "cmp_breach_label": "데이터 유출 위험",
+        "cmp_breach_dropbox": "중앙 집중식 공격 대상",
+        "cmp_breach_stardust": "유출할 중앙 저장소 없음",
+        "cmp_offline_label": "오프라인 사용",
+        "cmp_offline_dropbox": "부분적 (동기화된 파일만)",
+        "cmp_offline_stardust": "로컬 파일 전체 접근 가능",
+        "pricing_heading": "심플한 요금제",
+        "pricing_intro": "저장 용량 요금 없음. 저장소는 내가, 동기화는 우리가.",
+        "plan_free": "Free",
+        "plan_pro": "Pro",
+        "plan_team": "Team",
+        "price_tbd": "미정",
+        "plan_free_f1": "최대 3대 디바이스",
+        "plan_free_f2": "종단간 암호화",
+        "plan_free_f3": "P2P 파일 동기화",
+        "plan_free_f4": "암호화된 메타데이터 백업",
+        "plan_free_f5": "커뮤니티 지원",
+        "plan_pro_f1": "무제한 디바이스",
+        "plan_pro_f2": "종단간 암호화",
+        "plan_pro_f3": "P2P 파일 동기화",
+        "plan_pro_f4": "암호화된 메타데이터 백업",
+        "plan_pro_f5": "우선 지원",
+        "plan_pro_f6": "고급 라우팅",
+        "plan_team_f1": "사용자당 무제한 디바이스",
+        "plan_team_f2": "종단간 암호화",
+        "plan_team_f3": "P2P 파일 동기화",
+        "plan_team_f4": "팀 공유 폴더",
+        "plan_team_f5": "관리자 대시보드",
+        "plan_team_f6": "전담 지원",
+        "btn_get_started": "시작하기",
+        "btn_free_trial": "무료 체험 시작",
+        "btn_contact": "문의하기",
+        "footer_copy": "\u00a9 2025 StardustFS. All rights reserved.",
+        "lang_switch_label": "English",
+        "lang_switch_code": "en",
+    },
+}
+
+SUPPORTED_LANGS = set(TRANSLATIONS.keys())
+DEFAULT_LANG = "en"
+
+
+def get_translations(lang: str) -> dict[str, str]:
+    """지정된 언어의 번역 dict 반환. 미지원 언어면 영어 반환."""
+    if lang not in SUPPORTED_LANGS:
+        lang = DEFAULT_LANG
+    return TRANSLATIONS[lang]
+
+
+def detect_language(accept_language: str | None, query_lang: str | None) -> str:
+    """쿼리 파라미터 우선, 없으면 Accept-Language 헤더에서 언어 감지."""
+    if query_lang and query_lang in SUPPORTED_LANGS:
+        return query_lang
+
+    if not accept_language:
+        return DEFAULT_LANG
+
+    # Accept-Language 파싱 (간단 버전: 첫 번째 매칭)
+    for part in accept_language.split(","):
+        tag = part.split(";")[0].strip().lower()
+        if tag.startswith("ko"):
+            return "ko"
+        if tag.startswith("en"):
+            return "en"
+
+    return DEFAULT_LANG

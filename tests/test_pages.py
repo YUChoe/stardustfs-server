@@ -19,7 +19,6 @@ async def test_landing_page_content(client: AsyncClient):
     resp = await client.get("/")
     html = resp.text
     assert "StardustFS" in html
-    assert "AES-256" in html
     assert "P2P" in html
     assert "/auth/register" in html
     assert "/auth/login" in html

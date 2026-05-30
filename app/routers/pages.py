@@ -26,3 +26,35 @@ async def landing_page(
         name="landing.html",
         context={"t": t},
     )
+
+
+@router.get("/auth/register", response_class=HTMLResponse)
+async def register_page(
+    request: Request,
+    lang: str | None = Query(default=None),
+):
+    """회원가입 폼 페이지. 인증 불필요."""
+    accept_lang = request.headers.get("accept-language")
+    detected = detect_language(accept_lang, lang)
+    t = get_translations(detected)
+    return templates.TemplateResponse(
+        request=request,
+        name="register.html",
+        context={"t": t},
+    )
+
+
+@router.get("/auth/login", response_class=HTMLResponse)
+async def login_page(
+    request: Request,
+    lang: str | None = Query(default=None),
+):
+    """로그인 폼 페이지. 인증 불필요."""
+    accept_lang = request.headers.get("accept-language")
+    detected = detect_language(accept_lang, lang)
+    t = get_translations(detected)
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html",
+        context={"t": t},
+    )

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="{{ t.lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t.login_title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">StardustFS</a>
+            <nav>
+                <a href="/?lang={{ t.lang_switch_code }}" class="lang-switch">{{ t.lang_switch_label }}</a>
+                <a href="/auth/register">{{ t.nav_signup }}</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="auth-section">
+            <div class="container">
+                <div class="auth-card">
+                    <h1>{{ t.login_heading }}</h1>
+                    <div id="error-msg" class="error-msg" style="display:none;"></div>
+                    <div id="success-msg" class="success-msg" style="display:none;"></div>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="email">{{ t.label_email }}</label>
+                            <input type="email" id="email" name="email" required placeholder="{{ t.placeholder_email }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">{{ t.label_password }}</label>
+                            <input type="password" id="password" name="password" required placeholder="{{ t.placeholder_password }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">{{ t.btn_login }}</button>
+                    </form>
+                    <p class="auth-footer">{{ t.no_account }} <a href="/auth/register">{{ t.nav_signup }}</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorEl = document.getElementById('error-msg');
+        const successEl = document.getElementById('success-msg');
+        errorEl.style.display = 'none';
+        successEl.style.display = 'none';
+
+        try {
+            const resp = await fetch('/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email, password})
+            });
+            if (resp.ok) {
+                const data = await resp.json();
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
+                successEl.textContent = '{{ t.login_success }}';
+                successEl.style.display = 'block';
+                setTimeout(() => { window.location.href = '/'; }, 1000);
+            } else {
+                const data = await resp.json();
+                errorEl.textContent = data.detail || '{{ t.login_error }}';
+                errorEl.style.display = 'block';
+            }
+        } catch (err) {
+            errorEl.textContent = '{{ t.network_error }}';
+            errorEl.style.display = 'block';
+        }
+    });
+    </script>
+</body>
+</html>

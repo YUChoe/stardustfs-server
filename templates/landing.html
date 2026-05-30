@@ -12,8 +12,9 @@
             <a href="/" class="logo">StardustFS</a>
             <nav>
                 <a href="/?lang={{ t.lang_switch_code }}" class="lang-switch">{{ t.lang_switch_label }}</a>
-                <a href="/auth/login">{{ t.nav_signin }}</a>
-                <a href="/auth/register">{{ t.nav_signup }}</a>
+                <a href="/auth/login" id="nav-signin">{{ t.nav_signin }}</a>
+                <a href="/auth/register" id="nav-signup">{{ t.nav_signup }}</a>
+                <a href="/dashboard" id="nav-dashboard" style="display:none;">{{ t.nav_dashboard }}</a>
             </nav>
         </div>
     </header>
@@ -199,5 +200,15 @@
             <p>{{ t.footer_copy }}</p>
         </div>
     </footer>
+    <script>
+    (function() {
+        var token = localStorage.getItem('access_token');
+        if (token) {
+            document.getElementById('nav-signin').style.display = 'none';
+            document.getElementById('nav-signup').style.display = 'none';
+            document.getElementById('nav-dashboard').style.display = '';
+        }
+    })();
+    </script>
 </body>
 </html>

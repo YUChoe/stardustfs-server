@@ -1,0 +1,19 @@
+[project]
+name = "stardustfs-server"
+version = "0.1.0"
+description = "StardustFS Central Server - control plane for multi-device encrypted filesystem"
+requires-python = ">=3.9"
+readme = "README.md"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "httpx>=0.24.0",
+    "hypothesis>=6.80.0",
+]

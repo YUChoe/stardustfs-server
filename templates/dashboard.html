@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="{{ t.lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t.dashboard_title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">StardustFS</a>
+            <nav>
+                <a href="/?lang={{ t.lang_switch_code }}" class="lang-switch">{{ t.lang_switch_label }}</a>
+                <a href="#" id="logout-btn">{{ t.btn_logout }}</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="dashboard-section">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1>{{ t.dashboard_heading }}</h1>
+                    <p id="user-email" class="user-email"></p>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>{{ t.devices_heading }}</h2>
+                    </div>
+                    <div id="devices-list" class="devices-list">
+                        <p class="loading">{{ t.loading }}</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>{{ t.account_heading }}</h2>
+                    </div>
+                    <div class="account-actions">
+                        <button id="logout-all-btn" class="btn btn-danger">{{ t.btn_logout_all }}</button>
+                        <p class="hint">{{ t.logout_all_hint }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+    const TOKEN_KEY = 'access_token';
+    const REFRESH_KEY = 'refresh_token';
+
+    function getToken() {
+        return localStorage.getItem(TOKEN_KEY);
+    }
+
+    function authHeaders() {
+        return { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' };
+    }
+
+    async function refreshToken() {
+        const rt = localStorage.getItem(REFRESH_KEY);
+        if (!rt) return false;
+        try {
+            const resp = await fetch('/auth/refresh', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({refresh_token: rt})
+            });
+            if (resp.ok) {
+                const data = await resp.json();
+                localStorage.setItem(TOKEN_KEY, data.access_token);
+                localStorage.setItem(REFRESH_KEY, data.refresh_token);
+                return true;
+            }
+        } catch (e) {}
+        return false;
+    }
+
+    async function apiFetch(url, options = {}) {
+        options.headers = authHeaders();
+        let resp = await fetch(url, options);
+        if (resp.status === 401) {
+            const refreshed = await refreshToken();
+            if (refreshed) {
+                options.headers = authHeaders();
+                resp = await fetch(url, options);
+            } else {
+                logout();
+                return null;
+            }
+        }
+        return resp;
+    }
+
+    function logout() {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(REFRESH_KEY);
+        window.location.href = '/auth/login';
+    }
+
+    function parseJwt(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(atob(base64));
+        } catch (e) { return null; }
+    }
+
+    async function loadDevices() {
+        const container = document.getElementById('devices-list');
+        const resp = await apiFetch('/devices');
+        if (!resp) return;
+
+        if (resp.ok) {
+            const devices = await resp.json();
+            if (devices.length === 0) {
+                container.innerHTML = '<p class="empty">{{ t.no_devices }}</p>';
+                return;
+            }
+            container.innerHTML = devices.map(d => `
+                <div class="device-item">
+                    <div class="device-info">
+                        <span class="device-name">${escapeHtml(d.name)}</span>
+                        <span class="device-os">${escapeHtml(d.os)}</span>
+                        <span class="device-status ${d.is_online ? 'online' : 'offline'}">
+                            ${d.is_online ? '{{ t.status_online }}' : '{{ t.status_offline }}'}
+                        </span>
+                    </div>
+                    <button class="btn btn-small btn-danger" onclick="deleteDevice('${d.id}')">{{ t.btn_remove }}</button>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p class="error-msg">{{ t.load_error }}</p>';
+        }
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    async function deleteDevice(deviceId) {
+        if (!confirm('{{ t.confirm_delete }}')) return;
+        const resp = await apiFetch('/devices/' + deviceId, { method: 'DELETE' });
+        if (resp && (resp.status === 204 || resp.ok)) {
+            loadDevices();
+        }
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        logout();
+    });
+
+    document.getElementById('logout-all-btn').addEventListener('click', async () => {
+        logout();
+    });
+
+    // 초기화
+    (async () => {
+        const token = getToken();
+        if (!token) {
+            window.location.href = '/auth/login';
+            return;
+        }
+        const payload = parseJwt(token);
+        if (payload && payload.sub) {
+            document.getElementById('user-email').textContent = payload.sub;
+        }
+        await loadDevices();
+    })();
+    </script>
+</body>
+</html>

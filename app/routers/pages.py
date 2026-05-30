@@ -58,3 +58,19 @@ async def login_page(
         name="login.html",
         context={"t": t},
     )
+
+
+@router.get("/dashboard", response_class=HTMLResponse)
+async def dashboard_page(
+    request: Request,
+    lang: str | None = Query(default=None),
+):
+    """사용자 세션 관리 대시보드. 클라이언트 측 인증 확인."""
+    accept_lang = request.headers.get("accept-language")
+    detected = detect_language(accept_lang, lang)
+    t = get_translations(detected)
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard.html",
+        context={"t": t},
+    )

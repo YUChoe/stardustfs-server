@@ -398,3 +398,120 @@ footer {
   font-size: 0.85rem;
   margin-bottom: 1rem;
 }
+
+/* Dashboard */
+.dashboard-section {
+  padding: 3rem 0;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  color: #f0f6fc;
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.user-email {
+  color: #8b949e;
+  font-size: 0.95rem;
+}
+
+.dashboard-card {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.card-header h2 {
+  color: #f0f6fc;
+  font-size: 1.2rem;
+}
+
+.devices-list .loading,
+.devices-list .empty {
+  color: #8b949e;
+  font-size: 0.9rem;
+}
+
+.device-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #21262d;
+}
+
+.device-item:last-child {
+  border-bottom: none;
+}
+
+.device-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.device-name {
+  color: #f0f6fc;
+  font-weight: 500;
+}
+
+.device-os {
+  color: #8b949e;
+  font-size: 0.85rem;
+}
+
+.device-status {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+
+.device-status.online {
+  background: #1f3d2a;
+  color: #3fb950;
+}
+
+.device-status.offline {
+  background: #3d1f1f;
+  color: #f85149;
+}
+
+.btn-small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-danger {
+  background: #3d1f1f;
+  color: #f85149;
+  border: 1px solid #6e3030;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover {
+  background: #4d2525;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.account-actions .hint {
+  color: #8b949e;
+  font-size: 0.85rem;
+}

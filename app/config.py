@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     # Heartbeat 설정
     heartbeat_timeout_minutes: int = 5
 
+    # Tombstone 정리(GC) 정책 — 클라이언트에 전달, 서버는 GC 직접 수행 안 함
+    tombstone_retention_days: int = 30
+
     class Config:
         env_file = ".env"
         env_prefix = "STARDUST_"

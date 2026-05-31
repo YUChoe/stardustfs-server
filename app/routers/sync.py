@@ -67,9 +67,13 @@ async def metadata_status(
     current_user: dict = Depends(get_current_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
-    """메타데이터 백업 상태 조회 (version, uploaded_at)."""
+    """메타데이터 백업 상태 조회 (version, uploaded_at, tombstone 정책)."""
+    from app.config import get_settings
+
     service = SyncService(db)
     status = await service.get_metadata_status(current_user["id"])
+    # tombstone GC 정책값을 클라이언트에 전달 (서버는 GC를 직접 수행하지 않음)
+    status["tombstone_retention_days"] = get_settings().tombstone_retention_days
     return status
 
 

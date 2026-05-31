@@ -73,6 +73,18 @@ async def test_upload_metadata_empty_body(client: AsyncClient, auth_headers: dic
 
 
 @pytest.mark.asyncio
+async def test_metadata_status_includes_tombstone_retention(
+    client: AsyncClient, auth_headers: dict
+):
+    """status 응답에 tombstone_retention_days 정책값이 포함된다 (기본 30)."""
+    resp = await client.get("/sync/metadata/status", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "tombstone_retention_days" in data
+    assert data["tombstone_retention_days"] == 30
+
+
+@pytest.mark.asyncio
 async def test_upload_metadata_cas_accepts_matching_base(
     client: AsyncClient, auth_headers: dict
 ):

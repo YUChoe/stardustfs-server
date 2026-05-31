@@ -44,6 +44,19 @@ class RefreshRequest(BaseModel):
     refresh_token: str
 
 
+class VerifyRequest(BaseModel):
+    """토큰 검증 요청 (P2P 서버용)."""
+
+    token: str
+
+
+class VerifyResponse(BaseModel):
+    """토큰 검증 응답."""
+
+    valid: bool
+    user_id: str | None = None
+
+
 class UserResponse(BaseModel):
     """사용자 정보 응답."""
 

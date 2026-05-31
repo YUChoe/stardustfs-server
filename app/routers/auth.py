@@ -15,6 +15,8 @@ from app.schemas import (
     RegisterRequest,
     TokenResponse,
     UserResponse,
+    VerifyRequest,
+    VerifyResponse,
 )
 from app.services.auth_service import AuthService
 from app.services.oauth_service import OAuthService
@@ -100,3 +102,33 @@ async def refresh(body: RefreshRequest, db: aiosqlite.Connection = Depends(get_d
     token_service = TokenService(db)
     tokens = await token_service.refresh_tokens(body.refresh_token)
     return tokens
+
+
+@router.post("/verify", response_model=VerifyResponse)
+async def verify(body: VerifyRequest, db: aiosqlite.Connection = Depends(get_db)):
+    """Access Token 검증 (P2P 서버의 토큰 위임 검증용).
+
+    서명·만료·타입을 확인하고, 사용자 존재를 확인하여
+    유효 여부와 user_id를 반환한다. 무효 토큰도 200으로 valid=false를 반환한다
+    (P2P 서버가 valid 플래그로 판정하므로).
+    """
+    from app.security import decode_token
+
+    try:
+        payload = decode_token(body.token)
+    except Exception:
+        return VerifyResponse(valid=False)
+
+    if payload.get("type") != "access":
+        return VerifyResponse(valid=False)
+
+    user_id = payload.get("sub")
+    if user_id is None:
+        return VerifyResponse(valid=False)
+
+    cursor = await db.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+    row = await cursor.fetchone()
+    if row is None:
+        return VerifyResponse(valid=False)
+
+    return VerifyResponse(valid=True, user_id=user_id)

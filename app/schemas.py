@@ -103,6 +103,44 @@ class MetadataUploadResponse(BaseModel):
     version: int
 
 
+# === Share 관련 (MVP5) ===
+
+
+class ShareCreateRequest(BaseModel):
+    """공유 토큰 발급 요청."""
+
+    device_id: str
+    physical_path: str = Field(min_length=1)
+    expires_in_seconds: int = Field(ge=1, le=2_592_000)  # 1초 ~ 30일
+
+
+class ShareCreateResponse(BaseModel):
+    """공유 토큰 발급 응답."""
+
+    share_token: str
+    expires_at: datetime
+
+
+class ShareInfoResponse(BaseModel):
+    """공유 토큰 조회 응답 (physical_path 비노출)."""
+
+    device_id: str
+    expired: bool
+
+
+class ShareVerifyRequest(BaseModel):
+    """P2P 서버의 공유 토큰 위임 검증 요청."""
+
+    physical_path: str
+
+
+class ShareVerifyResponse(BaseModel):
+    """공유 토큰 검증 응답."""
+
+    valid: bool
+    device_id: str | None = None
+
+
 # === Routing 관련 ===
 
 

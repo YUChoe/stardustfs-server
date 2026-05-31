@@ -73,3 +73,17 @@ class MetadataVersionConflictError(StardustException):
             409,
             f"Metadata version conflict: server is at version {current_version}",
         )
+
+
+class ShareNotFoundError(StardustException):
+    """공유 토큰 미존재."""
+
+    def __init__(self) -> None:
+        super().__init__(404, "Share not found")
+
+
+class ShareExpiredError(StardustException):
+    """공유 토큰 만료."""
+
+    def __init__(self) -> None:
+        super().__init__(410, "Share has expired")

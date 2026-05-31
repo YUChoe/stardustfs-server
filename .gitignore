@@ -16,6 +16,7 @@ env/
 *.db
 data/*
 !data/.gitkeep
+!data/DATABASE_SCHEMA.md
 
 # IDE
 .vscode/

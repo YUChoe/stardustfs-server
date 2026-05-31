@@ -20,13 +20,30 @@ async def upload_metadata(
     current_user: dict = Depends(get_current_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
-    """메타데이터 백업 업로드 (application/octet-stream)."""
+    """메타데이터 백업 업로드 (application/octet-stream).
+
+    X-Base-Version 헤더가 있으면 낙관적 잠금(CAS)을 적용한다.
+    헤더 값이 서버의 현재 version과 일치하지 않으면 409를 반환한다.
+    헤더가 없으면 강제 덮어쓰기(force)로 동작한다(하위 호환).
+    """
     blob = await request.body()
     if not blob:
         raise StardustException(422, "Request body must not be empty")
 
+    base_version: int | None = None
+    base_version_header = request.headers.get("X-Base-Version")
+    if base_version_header is not None:
+        try:
+            base_version = int(base_version_header)
+        except ValueError:
+            raise StardustException(
+                422, "X-Base-Version header must be an integer"
+            )
+
     service = SyncService(db)
-    version = await service.upload_metadata(current_user["id"], blob)
+    version = await service.upload_metadata(
+        current_user["id"], blob, base_version=base_version
+    )
     return {"version": version}
 
 

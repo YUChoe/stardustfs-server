@@ -73,6 +73,87 @@ async def test_upload_metadata_empty_body(client: AsyncClient, auth_headers: dic
 
 
 @pytest.mark.asyncio
+async def test_upload_metadata_cas_accepts_matching_base(
+    client: AsyncClient, auth_headers: dict
+):
+    """X-Base-Version이 현재 서버 version과 일치하면 업로드 수락."""
+    headers = {**auth_headers, "Content-Type": "application/octet-stream"}
+    # 최초 업로드 (base=0, 서버 version 0)
+    resp = await client.put(
+        "/sync/metadata", content=b"v1",
+        headers={**headers, "X-Base-Version": "0"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["version"] == 1
+
+    # base=1로 다음 업로드 → 수락, version 2
+    resp = await client.put(
+        "/sync/metadata", content=b"v2",
+        headers={**headers, "X-Base-Version": "1"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["version"] == 2
+
+
+@pytest.mark.asyncio
+async def test_upload_metadata_cas_rejects_stale_base(
+    client: AsyncClient, auth_headers: dict
+):
+    """X-Base-Version이 서버 version보다 낮으면(stale) 409 거부."""
+    headers = {**auth_headers, "Content-Type": "application/octet-stream"}
+    # 서버를 version 2까지 올림
+    await client.put(
+        "/sync/metadata", content=b"v1",
+        headers={**headers, "X-Base-Version": "0"},
+    )
+    await client.put(
+        "/sync/metadata", content=b"v2",
+        headers={**headers, "X-Base-Version": "1"},
+    )
+
+    # 다른 디바이스가 stale base=1로 업로드 시도 → 409
+    resp = await client.put(
+        "/sync/metadata", content=b"stale",
+        headers={**headers, "X-Base-Version": "1"},
+    )
+    assert resp.status_code == 409
+
+    # 충돌 후에도 서버 데이터는 보존됨 (덮어쓰이지 않음)
+    dl = await client.get("/sync/metadata", headers=auth_headers)
+    assert dl.content == b"v2"
+    assert dl.headers["X-Metadata-Version"] == "2"
+
+
+@pytest.mark.asyncio
+async def test_upload_metadata_without_base_version_forces(
+    client: AsyncClient, auth_headers: dict
+):
+    """X-Base-Version 헤더가 없으면 CAS 없이 강제 업로드 (하위 호환)."""
+    headers = {**auth_headers, "Content-Type": "application/octet-stream"}
+    await client.put("/sync/metadata", content=b"v1", headers=headers)
+    # 헤더 없이 또 업로드 → 충돌 없이 version 증가
+    resp = await client.put("/sync/metadata", content=b"v2", headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()["version"] == 2
+
+
+@pytest.mark.asyncio
+async def test_upload_metadata_cas_invalid_header(
+    client: AsyncClient, auth_headers: dict
+):
+    """X-Base-Version이 정수가 아니면 422."""
+    resp = await client.put(
+        "/sync/metadata", content=b"v1",
+        headers={
+            **auth_headers,
+            "Content-Type": "application/octet-stream",
+            "X-Base-Version": "not-a-number",
+        },
+    )
+    assert resp.status_code == 422
+
+
+@pytest.mark.asyncio
 async def test_upload_key(client: AsyncClient, auth_headers: dict):
     """키 업로드 성공."""
     blob = b"encrypted-master-key"

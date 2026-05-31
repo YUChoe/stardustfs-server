@@ -58,3 +58,18 @@ class BackupNotFoundError(StardustException):
 
     def __init__(self, backup_type: str) -> None:
         super().__init__(404, f"{backup_type} backup not found")
+
+
+class MetadataVersionConflictError(StardustException):
+    """메타데이터 낙관적 잠금(CAS) 충돌.
+
+    클라이언트가 보낸 base version이 서버의 현재 version과 일치하지 않을 때
+    발생한다. 다른 디바이스가 그 사이에 업로드했음을 의미한다.
+    """
+
+    def __init__(self, current_version: int) -> None:
+        self.current_version = current_version
+        super().__init__(
+            409,
+            f"Metadata version conflict: server is at version {current_version}",
+        )

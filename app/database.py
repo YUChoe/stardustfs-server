@@ -94,6 +94,9 @@ async def get_db_connection() -> AsyncGenerator[aiosqlite.Connection, None]:
     db = await aiosqlite.connect(settings.database_url)
     try:
         await db.execute("PRAGMA foreign_keys=ON")
+        # 동시 writer가 즉시 SQLITE_BUSY로 실패하지 않고 락 해제를 대기하도록 설정.
+        # CAS의 UNIQUE(user_id, version) 충돌을 정확히 감지하기 위해 필요.
+        await db.execute("PRAGMA busy_timeout=5000")
         db.row_factory = aiosqlite.Row
         yield db
     finally:

@@ -307,6 +307,29 @@ footer {
   font-size: 0.85rem;
 }
 
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.social-links a {
+  color: #484f58;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.social-links a:hover {
+  color: #58a6ff;
+}
+
 /* Auth Forms */
 .auth-section {
   padding: 4rem 0;

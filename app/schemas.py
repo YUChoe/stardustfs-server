@@ -153,6 +153,15 @@ class RoutingResponse(BaseModel):
     last_heartbeat: datetime
 
 
+# === Network 관련 ===
+
+
+class ReflexiveAddressResponse(BaseModel):
+    """server-reflexive(공인) 주소 조회 응답 (HTTP STUN 등가)."""
+
+    public_ip: str
+
+
 # === 공통 ===
 
 

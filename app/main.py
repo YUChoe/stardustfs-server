@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.database import init_db
 from app.exceptions import StardustException
-from app.routers import auth, devices, network, pages, routing, shares, sync
+from app.routers import auth, devices, network, pages, relay, routing, shares, sync
 
 
 def setup_logging() -> None:
@@ -64,6 +64,7 @@ app.include_router(devices.router)
 app.include_router(sync.router)
 app.include_router(routing.router)
 app.include_router(network.router)
+app.include_router(relay.router)
 app.include_router(shares.router)
 app.include_router(pages.router)
 

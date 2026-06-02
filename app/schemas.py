@@ -162,6 +162,40 @@ class ReflexiveAddressResponse(BaseModel):
     public_ip: str
 
 
+# === Relay 관련 (P2P 릴레이 fallback) ===
+
+
+class RelayRequestBody(BaseModel):
+    """릴레이 요청 (요청자 → 서버). payload는 불투명 blob."""
+
+    target_device_id: str
+    op: str
+    payload: dict
+    requester_device_id: str | None = None
+
+
+class RelayRequestAccepted(BaseModel):
+    """릴레이 요청 수락 응답."""
+
+    request_id: str
+
+
+class RelayPolled(BaseModel):
+    """대상이 폴링으로 수신한 요청."""
+
+    request_id: str
+    op: str
+    payload: dict
+    requester_device_id: str | None = None
+
+
+class RelayResponseBody(BaseModel):
+    """릴레이 응답 (대상 → 서버). result는 불투명 blob."""
+
+    status: int
+    result: dict
+
+
 # === 공통 ===
 
 

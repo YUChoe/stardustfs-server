@@ -1,6 +1,8 @@
 """Metadata and key backup synchronisation router."""
 from __future__ import annotations
 
+import time
+
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse, Response
 
@@ -10,8 +12,22 @@ from app.dependencies import get_current_user, get_db
 from app.exceptions import StardustException
 from app.schemas import MetadataUploadResponse
 from app.services.sync_service import SyncService
+from app.services.version_notifier import VersionNotifier
 
 router = APIRouter(prefix="/sync", tags=["sync"])
+
+# 롱폴링 설정
+_WAIT_TIMEOUT = 25.0  # 전체 대기 한계 (리버스 프록시 60초 이내)
+_WAIT_TICK = 5.0      # 내부 재확인 주기 (알림 누락 보정)
+
+
+def get_version_notifier(request: Request) -> VersionNotifier:
+    """app.state의 단일 VersionNotifier 인스턴스를 반환한다."""
+    notifier = getattr(request.app.state, "version_notifier", None)
+    if notifier is None:
+        notifier = VersionNotifier()
+        request.app.state.version_notifier = notifier
+    return notifier
 
 
 @router.put("/metadata", response_model=MetadataUploadResponse)
@@ -44,7 +60,41 @@ async def upload_metadata(
     version = await service.upload_metadata(
         current_user["id"], blob, base_version=base_version
     )
+    # version 증가 성공 → 대기 중인 롱폴러를 깨운다 (CAS 충돌이면 위에서 409로 반환됨)
+    get_version_notifier(request).notify(current_user["id"])
     return {"version": version}
+
+
+@router.get("/metadata/wait")
+async def wait_metadata_version(
+    request: Request,
+    known_version: int = 0,
+    current_user: dict = Depends(get_current_user),
+    db: aiosqlite.Connection = Depends(get_db),
+):
+    """메타데이터 version 변경 롱폴링.
+
+    서버 version이 known_version보다 크면 즉시 반환한다. 같으면 version이
+    증가할 때까지(타임아웃 내) 대기한다. 타임아웃 시 changed=false로 현재
+    version을 반환한다(클라이언트는 즉시 재대기).
+    """
+    service = SyncService(db)
+    notifier = get_version_notifier(request)
+    user_id = current_user["id"]
+
+    deadline = time.monotonic() + _WAIT_TIMEOUT
+    current = await service.get_current_version(user_id)
+    if current > known_version:
+        return {"version": current, "changed": True}
+
+    while time.monotonic() < deadline:
+        remaining = deadline - time.monotonic()
+        await notifier.wait(user_id, timeout=min(remaining, _WAIT_TICK))
+        current = await service.get_current_version(user_id)
+        if current > known_version:
+            return {"version": current, "changed": True}
+
+    return {"version": current, "changed": False}
 
 
 @router.get("/metadata")

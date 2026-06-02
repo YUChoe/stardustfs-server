@@ -135,6 +135,18 @@ class SyncService:
 
         return {"version": row["version"], "uploaded_at": row["uploaded_at"]}
 
+    async def get_current_version(self, user_id: str) -> int:
+        """현재 메타데이터 version을 반환한다. 백업이 없으면 0."""
+        cursor = await self.db.execute(
+            "SELECT MAX(version) as max_ver FROM metadata_backups "
+            "WHERE user_id = ?",
+            (user_id,),
+        )
+        row = await cursor.fetchone()
+        if row is None or row["max_ver"] is None:
+            return 0
+        return int(row["max_ver"])
+
     async def upload_key(self, user_id: str, blob: bytes) -> None:
         """암호화 키 blob 저장 (upsert)."""
         # SQLite upsert: INSERT OR REPLACE

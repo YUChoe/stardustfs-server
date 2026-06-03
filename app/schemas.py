@@ -203,3 +203,60 @@ class ErrorResponse(BaseModel):
     """에러 응답."""
 
     detail: str
+
+
+# --- 리플리케이션(패리티 백업) ---
+
+
+class HostingRequest(BaseModel):
+    """디바이스가 제공하는 스토리지 용량 신고."""
+
+    device_id: str = Field(min_length=1)
+    provided_bytes: int = Field(ge=0)
+
+
+class PlacementRequest(BaseModel):
+    """청크 복제 배치 요청."""
+
+    size: int = Field(ge=1)
+    count: int = Field(default=3, ge=1, le=10)
+    exclude: list[str] = Field(default_factory=list)  # 제외할 device_id
+
+
+class HolderInfo(BaseModel):
+    """복제 대상 홀더 후보/현황."""
+
+    device_id: str
+    connection_address: str | None = None
+    is_online: bool = True
+    status: str = "active"
+
+
+class PlacementResponse(BaseModel):
+    """배치 결과(홀더 후보 목록)."""
+
+    holders: list[HolderInfo]
+
+
+class ChunkRegisterRequest(BaseModel):
+    """청크 등록(소유자 기준)."""
+
+    chunk_id: str = Field(min_length=1)
+    file_ref: str = Field(min_length=1)
+    idx: int = Field(ge=0)
+    size: int = Field(ge=0)
+
+
+class ReplicaRequest(BaseModel):
+    """복제본 저장 확정(홀더 등록)."""
+
+    chunk_id: str = Field(min_length=1)
+    holder_device_id: str = Field(min_length=1)
+
+
+class HealthResponse(BaseModel):
+    """청크 복제 건강성."""
+
+    chunk_id: str
+    total: int
+    online: int

@@ -84,3 +84,45 @@ JWT refresh 토큰.
 | expires_at | TEXT | NOT NULL | 만료 시각 (ISO 8601) |
 
 인덱스: `idx_shares_owner (owner_user_id)`
+
+### hosting (리플리케이션)
+디바이스별 제공/보관 용량 회계. 무료 사용자는 provided_bytes의 50%까지 타 사용자
+복제 보관에 제공한다(호혜 쿼터). zero-knowledge: 용량 숫자만 보관.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| device_id | TEXT | PK, FK devices(id) ON DELETE CASCADE | 디바이스 |
+| provided_bytes | INTEGER | NOT NULL, 기본값 0 | 신고한 제공 용량 |
+| hosted_bytes | INTEGER | NOT NULL, 기본값 0 | 현재 타 사용자 보관 중인 합 |
+| updated_at | TEXT | NOT NULL, 기본값 datetime('now') | 갱신 시각 |
+
+### chunks (리플리케이션)
+암호문 청크의 위치 레지스트리(소유자/크기 메타데이터만, 내용 미보관).
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| chunk_id | TEXT | PK | 클라이언트 생성 청크 식별자 |
+| owner_user_id | TEXT | NOT NULL, FK users(id) ON DELETE CASCADE | 소유자 |
+| file_ref | TEXT | NOT NULL | 불투명 파일 참조(경로 비노출) |
+| idx | INTEGER | NOT NULL | 파일 내 청크 인덱스 |
+| size | INTEGER | NOT NULL | 청크 크기(바이트) |
+| created_at | TEXT | NOT NULL, 기본값 datetime('now') | 생성 시각 |
+
+인덱스: `idx_chunks_owner (owner_user_id)`, `idx_chunks_file (owner_user_id, file_ref)`
+
+### replicas (리플리케이션)
+청크별 홀더(복제본 보관 디바이스) 매핑.
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | INTEGER | PK AUTOINCREMENT | |
+| chunk_id | TEXT | NOT NULL, FK chunks(chunk_id) ON DELETE CASCADE | 대상 청크 |
+| holder_device_id | TEXT | NOT NULL, FK devices(id) ON DELETE CASCADE | 보관 디바이스 |
+| status | TEXT | NOT NULL, 기본값 'active' | active/stale |
+| updated_at | TEXT | NOT NULL, 기본값 datetime('now') | 갱신 시각 |
+
+제약: `UNIQUE(chunk_id, holder_device_id)`. 인덱스: `idx_replicas_chunk (chunk_id)`,
+`idx_replicas_holder (holder_device_id)`
+
+마이그레이션: 위 3개 테이블은 `CREATE TABLE IF NOT EXISTS`(init_db)로 추가되는
+신규 테이블이며 기존 데이터에 영향이 없다(추가형, 별도 백업/롤백 불필요).

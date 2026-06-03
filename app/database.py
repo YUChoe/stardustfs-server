@@ -76,6 +76,39 @@ CREATE TABLE IF NOT EXISTS shares (
 );
 
 CREATE INDEX IF NOT EXISTS idx_shares_owner ON shares(owner_user_id);
+
+-- 리플리케이션(암호화 패리티 백업): 위치 레지스트리 + 호혜 회계 (zero-knowledge:
+-- 청크 내용/키는 저장하지 않고 위치/크기/회계 메타데이터만 보관)
+CREATE TABLE IF NOT EXISTS hosting (
+    device_id TEXT PRIMARY KEY REFERENCES devices(id) ON DELETE CASCADE,
+    provided_bytes INTEGER NOT NULL DEFAULT 0,
+    hosted_bytes INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS chunks (
+    chunk_id TEXT PRIMARY KEY,
+    owner_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    file_ref TEXT NOT NULL,
+    idx INTEGER NOT NULL,
+    size INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_chunks_owner ON chunks(owner_user_id);
+CREATE INDEX IF NOT EXISTS idx_chunks_file ON chunks(owner_user_id, file_ref);
+
+CREATE TABLE IF NOT EXISTS replicas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chunk_id TEXT NOT NULL REFERENCES chunks(chunk_id) ON DELETE CASCADE,
+    holder_device_id TEXT NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'active',
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(chunk_id, holder_device_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_replicas_chunk ON replicas(chunk_id);
+CREATE INDEX IF NOT EXISTS idx_replicas_holder ON replicas(holder_device_id);
 """
 
 

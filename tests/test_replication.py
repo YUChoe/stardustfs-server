@@ -154,6 +154,19 @@ async def test_placement_respects_capacity_and_reciprocity(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_non_providing_device_never_placed(client: AsyncClient):
+    """호혜 미충족(제공 용량 미신고) device는 신규 배치 후보에서 제외된다(6.3)."""
+    a = await _token(client, "rep-m@example.com")
+    b = await _token(client, "rep-n@example.com")
+    # B 디바이스는 온라인이지만 provided_bytes를 신고하지 않음
+    dev_b = await _device(client, b, "host-b")
+    r = await client.post(
+        "/replication/placement", json={"size": 1, "count": 3}, headers=_h(a)
+    )
+    assert all(h["device_id"] != dev_b for h in r.json()["holders"])
+
+
+@pytest.mark.asyncio
 async def test_set_hosting_requires_own_device(client: AsyncClient):
     a = await _token(client, "rep-g@example.com")
     b = await _token(client, "rep-h@example.com")

@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     # Tombstone 정리(GC) 정책 — 클라이언트에 전달, 서버는 GC 직접 수행 안 함
     tombstone_retention_days: int = 30
 
+    # UDP 홀펀칭 랑데부 서버 (선택, 기본 비활성)
+    rendezvous_enabled: bool = False
+    rendezvous_host: str = "0.0.0.0"
+    rendezvous_port: int = 9091
+
     class Config:
         env_file = ".env"
         env_prefix = "STARDUST_"

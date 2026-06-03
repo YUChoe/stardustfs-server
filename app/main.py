@@ -41,11 +41,45 @@ def setup_logging() -> None:
 setup_logging()
 
 
+def _verify_access_token(token: str) -> str | None:
+    """access JWT를 검증해 user_id(sub)를 반환한다. 실패 시 None.
+
+    UDP 랑데부 서버용(HTTP 미들웨어 밖). DB 조회 없이 서명/만료만 본다.
+    """
+    from app.security import decode_token
+
+    try:
+        payload = decode_token(token)
+    except Exception:
+        return None
+    if payload.get("type") != "access":
+        return None
+    return payload.get("sub")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """앱 시작 시 DB 초기화."""
+    """앱 시작 시 DB 초기화 + (선택) UDP 랑데부 서버 시작."""
     await init_db()
-    yield
+
+    from app.config import get_settings
+
+    settings = get_settings()
+    rendezvous = None
+    if settings.rendezvous_enabled:
+        from app.rendezvous import RendezvousServer
+
+        rendezvous = RendezvousServer(
+            settings.rendezvous_host,
+            settings.rendezvous_port,
+            _verify_access_token,
+        )
+        await rendezvous.start()
+    try:
+        yield
+    finally:
+        if rendezvous is not None:
+            await rendezvous.stop()
 
 
 app = FastAPI(title="StardustFS Central Server", lifespan=lifespan)

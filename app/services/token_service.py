@@ -117,3 +117,20 @@ class TokenService:
         )
         await self.db.commit()
         logger.info(f"All refresh tokens revoked for user {user_id}")
+
+    async def revoke_refresh_token(
+        self, user_id: str, refresh_token: str
+    ) -> None:
+        """주어진 Refresh Token을 본인 소유일 때만 무효화한다 (멱등).
+
+        토큰이 존재하지 않거나 이미 폐기되었어도 예외 없이 통과한다(UPDATE 0행).
+        user_id 일치 조건으로 타 사용자 토큰 취소를 방지한다.
+        """
+        token_hash = _hash_token(refresh_token)
+        await self.db.execute(
+            "UPDATE refresh_tokens SET is_revoked = 1 "
+            "WHERE user_id = ? AND token_hash = ?",
+            (user_id, token_hash),
+        )
+        await self.db.commit()
+        logger.info(f"Refresh token revoked for user {user_id}")

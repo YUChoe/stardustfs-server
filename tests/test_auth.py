@@ -152,3 +152,92 @@ async def test_refresh_reuse_detection(client: AsyncClient):
         json={"refresh_token": new_refresh},
     )
     assert resp2.status_code == 401
+
+
+async def _register_login(client: AsyncClient, email: str) -> dict:
+    """등록 + 로그인 후 토큰 쌍을 반환한다."""
+    await client.post(
+        "/auth/register", json={"email": email, "password": "securepass123"}
+    )
+    resp = await client.post(
+        "/auth/login", json={"email": email, "password": "securepass123"}
+    )
+    return resp.json()
+
+
+@pytest.mark.asyncio
+async def test_logout_revokes_refresh_token(client: AsyncClient):
+    """logout 후 해당 refresh 토큰은 무효화되어 갱신이 401."""
+    tokens = await _register_login(client, "logout1@example.com")
+    headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+
+    resp = await client.post(
+        "/auth/logout",
+        json={"refresh_token": tokens["refresh_token"]},
+        headers=headers,
+    )
+    assert resp.status_code == 200
+
+    # 취소된 토큰으로 갱신 시도 → 401
+    refresh_resp = await client.post(
+        "/auth/refresh", json={"refresh_token": tokens["refresh_token"]}
+    )
+    assert refresh_resp.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_logout_is_idempotent(client: AsyncClient):
+    """이미 취소되었거나 존재하지 않는 토큰도 200(멱등)."""
+    tokens = await _register_login(client, "logout2@example.com")
+    headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+
+    first = await client.post(
+        "/auth/logout",
+        json={"refresh_token": tokens["refresh_token"]},
+        headers=headers,
+    )
+    assert first.status_code == 200
+    # 두 번째(이미 취소됨)도 200
+    second = await client.post(
+        "/auth/logout",
+        json={"refresh_token": tokens["refresh_token"]},
+        headers=headers,
+    )
+    assert second.status_code == 200
+    # 존재하지 않는 토큰도 200
+    third = await client.post(
+        "/auth/logout",
+        json={"refresh_token": "nonexistent-token"},
+        headers=headers,
+    )
+    assert third.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_logout_requires_auth(client: AsyncClient):
+    """access_token 없이 logout 시 401."""
+    resp = await client.post(
+        "/auth/logout", json={"refresh_token": "x"}
+    )
+    assert resp.status_code in (401, 403)
+
+
+@pytest.mark.asyncio
+async def test_logout_does_not_revoke_other_users_token(client: AsyncClient):
+    """타 사용자의 refresh 토큰은 취소되지 않는다(user-scoped)."""
+    a_tokens = await _register_login(client, "logout-a@example.com")
+    b_tokens = await _register_login(client, "logout-b@example.com")
+
+    # A가 자기 access로 B의 refresh 토큰 취소 시도 → 200(멱등)이지만 실제로는 미취소
+    resp = await client.post(
+        "/auth/logout",
+        json={"refresh_token": b_tokens["refresh_token"]},
+        headers={"Authorization": f"Bearer {a_tokens['access_token']}"},
+    )
+    assert resp.status_code == 200
+
+    # B의 refresh 토큰은 여전히 유효
+    b_refresh = await client.post(
+        "/auth/refresh", json={"refresh_token": b_tokens["refresh_token"]}
+    )
+    assert b_refresh.status_code == 200

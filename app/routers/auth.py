@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, status
 
 import aiosqlite
 
-from app.dependencies import get_db
+from app.dependencies import get_current_user, get_db
 from app.schemas import (
     LoginRequest,
     OAuthRequest,
@@ -102,6 +102,24 @@ async def refresh(body: RefreshRequest, db: aiosqlite.Connection = Depends(get_d
     token_service = TokenService(db)
     tokens = await token_service.refresh_tokens(body.refresh_token)
     return tokens
+
+
+@router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout(
+    body: RefreshRequest,
+    current_user: dict = Depends(get_current_user),
+    db: aiosqlite.Connection = Depends(get_db),
+):
+    """제시한 Refresh Token을 무효화한다 (본인 소유, 멱등).
+
+    access_token 인증이 필요하다. 토큰이 없거나 이미 폐기되었어도 200을 반환한다
+    (정보 노출 방지). 디바이스별 토큰 연결/취소는 비범위(refresh_tokens는 user-scoped).
+    """
+    token_service = TokenService(db)
+    await token_service.revoke_refresh_token(
+        current_user["id"], body.refresh_token
+    )
+    return {"status": "ok"}
 
 
 @router.post("/verify", response_model=VerifyResponse)

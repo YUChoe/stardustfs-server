@@ -11,6 +11,7 @@ import aiosqlite
 
 from app.dependencies import get_current_user, get_db
 from app.schemas import (
+    ChunkInfo,
     ChunkRegisterRequest,
     HealthResponse,
     HolderInfo,
@@ -70,6 +71,21 @@ async def register_chunk(
         current_user["id"], body.chunk_id, body.file_ref, body.idx, body.size
     )
     return {"status": "ok"}
+
+
+@router.get("/chunks/{file_ref}", response_model=list[ChunkInfo])
+async def list_chunks(
+    file_ref: str,
+    current_user: dict = Depends(get_current_user),
+    db: aiosqlite.Connection = Depends(get_db),
+):
+    """파일(file_ref)에 속한 청크 목록(idx 순)을 반환한다(복구용, 소유자 한정)."""
+    service = ReplicationService(db)
+    rows = await service.list_chunks(current_user["id"], file_ref)
+    return [
+        ChunkInfo(chunk_id=r["chunk_id"], idx=r["idx"], size=r["size"])
+        for r in rows
+    ]
 
 
 @router.post("/replicas", status_code=status.HTTP_200_OK)

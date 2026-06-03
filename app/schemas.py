@@ -260,3 +260,11 @@ class HealthResponse(BaseModel):
     chunk_id: str
     total: int
     online: int
+
+
+class ChunkInfo(BaseModel):
+    """파일(file_ref)에 속한 청크 메타(복구용)."""
+
+    chunk_id: str
+    idx: int
+    size: int

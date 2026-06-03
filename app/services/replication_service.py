@@ -57,6 +57,22 @@ class ReplicationService:
         )
         await self.db.commit()
 
+    async def list_chunks(self, owner_user_id: str, file_ref: str) -> list[dict]:
+        """파일(file_ref)에 속한 청크 목록(idx 순)을 반환한다(소유자 한정).
+
+        복구 시 클라이언트가 어떤 청크를 어디서 받아야 하는지 알기 위해 사용한다.
+        """
+        cur = await self.db.execute(
+            "SELECT chunk_id, idx, size FROM chunks "
+            "WHERE owner_user_id = ? AND file_ref = ? ORDER BY idx",
+            (owner_user_id, file_ref),
+        )
+        rows = await cur.fetchall()
+        return [
+            {"chunk_id": row["chunk_id"], "idx": row["idx"], "size": row["size"]}
+            for row in rows
+        ]
+
     async def record_replica(
         self, owner_user_id: str, chunk_id: str, holder_device_id: str
     ) -> bool:

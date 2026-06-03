@@ -64,6 +64,35 @@ async def test_register_chunk_and_replica_and_list(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_list_chunks_by_file_ref_owner_scoped(client: AsyncClient):
+    a = await _token(client, "rep-k@example.com")
+    b = await _token(client, "rep-l@example.com")
+    # A가 file_ref="fr1"에 청크 2개 등록(idx 역순으로 넣어도 정렬 확인)
+    for chunk_id, idx in (("k1", 1), ("k0", 0)):
+        await client.post(
+            "/replication/chunks",
+            json={"chunk_id": chunk_id, "file_ref": "fr1", "idx": idx, "size": 10},
+            headers=_h(a),
+        )
+    # B가 다른 file_ref에 등록(격리 확인)
+    await client.post(
+        "/replication/chunks",
+        json={"chunk_id": "kb", "file_ref": "fr1", "idx": 0, "size": 10},
+        headers=_h(b),
+    )
+    r = await client.get("/replication/chunks/fr1", headers=_h(a))
+    assert r.status_code == 200
+    rows = r.json()
+    assert [row["chunk_id"] for row in rows] == ["k0", "k1"]  # idx 순
+    # B는 자신의 청크만
+    r = await client.get("/replication/chunks/fr1", headers=_h(b))
+    assert [row["chunk_id"] for row in r.json()] == ["kb"]
+    # 등록 없는 file_ref → 빈 목록
+    r = await client.get("/replication/chunks/none", headers=_h(a))
+    assert r.json() == []
+
+
+@pytest.mark.asyncio
 async def test_replica_requires_owned_chunk(client: AsyncClient):
     a = await _token(client, "rep-c@example.com")
     b = await _token(client, "rep-d@example.com")

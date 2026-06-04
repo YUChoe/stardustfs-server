@@ -29,6 +29,22 @@ async def _device(client: AsyncClient, token: str, name: str) -> str:
 
 
 @pytest.mark.asyncio
+async def test_policy_returns_defaults(client: AsyncClient):
+    a = await _token(client, "rep-policy@example.com")
+    r = await client.get("/replication/policy", headers=_h(a))
+    assert r.status_code == 200
+    body = r.json()
+    assert body["reciprocity_fraction"] == 0.5
+    assert body["min_replicas"] == 3
+
+
+@pytest.mark.asyncio
+async def test_policy_requires_auth(client: AsyncClient):
+    r = await client.get("/replication/policy")
+    assert r.status_code in (401, 403)
+
+
+@pytest.mark.asyncio
 async def test_register_chunk_and_replica_and_list(client: AsyncClient):
     a = await _token(client, "rep-a@example.com")
     b = await _token(client, "rep-b@example.com")

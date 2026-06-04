@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 import aiosqlite
 
 from app.dependencies import get_current_user, get_db
+from app.config import get_settings
 from app.schemas import (
     ChunkInfo,
     ChunkRegisterRequest,
@@ -19,10 +20,21 @@ from app.schemas import (
     PlacementRequest,
     PlacementResponse,
     ReplicaRequest,
+    ReplicationPolicy,
 )
 from app.services.replication_service import ReplicationService
 
 router = APIRouter(prefix="/replication", tags=["replication"])
+
+
+@router.get("/policy", response_model=ReplicationPolicy)
+async def get_policy(current_user: dict = Depends(get_current_user)):
+    """리플리케이션 정책(호혜 비율·목표 복제본 수)을 반환한다."""
+    settings = get_settings()
+    return ReplicationPolicy(
+        reciprocity_fraction=settings.replication_reciprocity_fraction,
+        min_replicas=settings.replication_min_replicas,
+    )
 
 
 @router.post("/hosting", status_code=status.HTTP_200_OK)

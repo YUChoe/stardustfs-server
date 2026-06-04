@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     rendezvous_host: str = "0.0.0.0"
     rendezvous_port: int = 9091
 
+    # 리플리케이션 정책 (클라이언트가 /replication/policy로 내려받음)
+    replication_reciprocity_fraction: float = 0.5  # 제공 용량 중 타인 보관 허용 비율
+    replication_min_replicas: int = 3              # 목표 복제본 수
+
     class Config:
         env_file = ".env"
         env_prefix = "STARDUST_"

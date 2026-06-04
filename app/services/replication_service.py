@@ -10,10 +10,17 @@ import logging
 
 import aiosqlite
 
+from app.config import get_settings
+
 logger = logging.getLogger(__name__)
 
-# 무료 사용자는 제공 용량의 50%를 타 사용자 보관에 제공한다(호혜 쿼터).
+# 호혜 쿼터 기본값(설정 미지정 시). 실제 값은 Settings에서 읽는다.
 RECIPROCITY_FRACTION = 0.5
+
+
+def _reciprocity_fraction() -> float:
+    """현재 호혜 비율(서버 설정값). placement와 /replication/policy가 공유한다."""
+    return get_settings().replication_reciprocity_fraction
 
 
 class ReplicationService:
@@ -181,8 +188,8 @@ class ReplicationService:
             ">= ? "
             "ORDER BY avail DESC LIMIT ?"
         )
-        params: list = [RECIPROCITY_FRACTION, *exclude,
-                        RECIPROCITY_FRACTION, size, count]
+        fraction = _reciprocity_fraction()
+        params: list = [fraction, *exclude, fraction, size, count]
         cur = await self.db.execute(sql, tuple(params))
         rows = await cur.fetchall()
         return [

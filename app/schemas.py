@@ -268,3 +268,10 @@ class ChunkInfo(BaseModel):
     chunk_id: str
     idx: int
     size: int
+
+
+class ReplicationPolicy(BaseModel):
+    """클라이언트가 내려받는 리플리케이션 정책."""
+
+    reciprocity_fraction: float
+    min_replicas: int

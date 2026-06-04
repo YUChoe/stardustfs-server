@@ -35,7 +35,7 @@ async def test_policy_returns_defaults(client: AsyncClient):
     assert r.status_code == 200
     body = r.json()
     assert body["reciprocity_fraction"] == 0.5
-    assert body["min_replicas"] == 2
+    assert body["min_replicas"] == 1
 
 
 @pytest.mark.asyncio

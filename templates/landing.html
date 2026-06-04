@@ -69,6 +69,9 @@
                             <tr>
                                 <th>{{ t.col_feature }}</th>
                                 <th>{{ t.col_dropbox }}</th>
+                                <th>{{ t.col_icloud }}</th>
+                                <th>{{ t.col_google }}</th>
+                                <th>{{ t.col_onedrive }}</th>
                                 <th class="highlight">{{ t.col_stardust }}</th>
                             </tr>
                         </thead>
@@ -76,41 +79,65 @@
                             <tr>
                                 <td>{{ t.cmp_storage_label }}</td>
                                 <td>{{ t.cmp_storage_dropbox }}</td>
+                                <td>{{ t.cmp_storage_icloud }}</td>
+                                <td>{{ t.cmp_storage_google }}</td>
+                                <td>{{ t.cmp_storage_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_storage_stardust }}</td>
                             </tr>
                             <tr>
                                 <td>{{ t.cmp_access_label }}</td>
                                 <td>{{ t.cmp_access_dropbox }}</td>
+                                <td>{{ t.cmp_access_icloud }}</td>
+                                <td>{{ t.cmp_access_google }}</td>
+                                <td>{{ t.cmp_access_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_access_stardust }}</td>
                             </tr>
                             <tr>
                                 <td>{{ t.cmp_e2e_label }}</td>
                                 <td>{{ t.cmp_e2e_dropbox }}</td>
+                                <td>{{ t.cmp_e2e_icloud }}</td>
+                                <td>{{ t.cmp_e2e_google }}</td>
+                                <td>{{ t.cmp_e2e_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_e2e_stardust }}</td>
                             </tr>
                             <tr>
                                 <td>{{ t.cmp_transfer_label }}</td>
                                 <td>{{ t.cmp_transfer_dropbox }}</td>
+                                <td>{{ t.cmp_transfer_icloud }}</td>
+                                <td>{{ t.cmp_transfer_google }}</td>
+                                <td>{{ t.cmp_transfer_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_transfer_stardust }}</td>
                             </tr>
                             <tr>
                                 <td>{{ t.cmp_limit_label }}</td>
                                 <td>{{ t.cmp_limit_dropbox }}</td>
+                                <td>{{ t.cmp_limit_icloud }}</td>
+                                <td>{{ t.cmp_limit_google }}</td>
+                                <td>{{ t.cmp_limit_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_limit_stardust }}</td>
                             </tr>
                             <tr>
                                 <td>{{ t.cmp_cost_label }}</td>
                                 <td>{{ t.cmp_cost_dropbox }}</td>
+                                <td>{{ t.cmp_cost_icloud }}</td>
+                                <td>{{ t.cmp_cost_google }}</td>
+                                <td>{{ t.cmp_cost_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_cost_stardust }}</td>
                             </tr>
                             <tr>
                                 <td>{{ t.cmp_breach_label }}</td>
                                 <td>{{ t.cmp_breach_dropbox }}</td>
+                                <td>{{ t.cmp_breach_icloud }}</td>
+                                <td>{{ t.cmp_breach_google }}</td>
+                                <td>{{ t.cmp_breach_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_breach_stardust }}</td>
                             </tr>
                             <tr>
                                 <td>{{ t.cmp_offline_label }}</td>
                                 <td>{{ t.cmp_offline_dropbox }}</td>
+                                <td>{{ t.cmp_offline_icloud }}</td>
+                                <td>{{ t.cmp_offline_google }}</td>
+                                <td>{{ t.cmp_offline_onedrive }}</td>
                                 <td class="highlight">{{ t.cmp_offline_stardust }}</td>
                             </tr>
                         </tbody>
@@ -133,6 +160,8 @@
                             <li>{{ t.plan_free_f3 }}</li>
                             <li>{{ t.plan_free_f4 }}</li>
                             <li>{{ t.plan_free_f5 }}</li>
+                            <li>{{ t.plan_free_f6 }}</li>
+                            <li>{{ t.plan_free_f7 }}</li>
                         </ul>
                         <a href="/auth/register" class="btn btn-primary">{{ t.btn_get_started }}</a>
                     </div>
@@ -146,6 +175,8 @@
                             <li>{{ t.plan_pro_f4 }}</li>
                             <li>{{ t.plan_pro_f5 }}</li>
                             <li>{{ t.plan_pro_f6 }}</li>
+                            <li>{{ t.plan_pro_f7 }}</li>
+                            <li>{{ t.plan_pro_f8 }}</li>
                         </ul>
                         <a href="/auth/register" class="btn btn-primary">{{ t.btn_free_trial }}</a>
                     </div>
@@ -159,6 +190,8 @@
                             <li>{{ t.plan_team_f4 }}</li>
                             <li>{{ t.plan_team_f5 }}</li>
                             <li>{{ t.plan_team_f6 }}</li>
+                            <li>{{ t.plan_team_f7 }}</li>
+                            <li>{{ t.plan_team_f8 }}</li>
                         </ul>
                         <a href="/auth/register" class="btn btn-secondary">{{ t.btn_contact }}</a>
                     </div>
@@ -193,6 +226,10 @@
                     <details class="faq-item">
                         <summary>{{ t.faq_q6 }}</summary>
                         <p>{{ t.faq_a6 }}</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>{{ t.faq_q7 }}</summary>
+                        <p>{{ t.faq_a7 }}</p>
                     </details>
                 </div>
             </div>

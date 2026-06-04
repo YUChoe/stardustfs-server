@@ -173,6 +173,7 @@ nav a.lang-switch:hover {
 
 .comparison-table {
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 0.9rem;
 }

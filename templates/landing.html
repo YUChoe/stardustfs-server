@@ -4,7 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ t.title }}</title>
+    <meta name="description" content="{{ t.seo_description }}">
+    <meta name="keywords" content="{{ t.seo_keywords }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ seo.canonical }}">
+    <link rel="alternate" hreflang="ko" href="{{ seo.url_ko }}">
+    <link rel="alternate" hreflang="en" href="{{ seo.url_en }}">
+    <link rel="alternate" hreflang="x-default" href="{{ seo.canonical }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="StardustFS">
+    <meta property="og:title" content="{{ t.title }}">
+    <meta property="og:description" content="{{ t.seo_description }}">
+    <meta property="og:url" content="{{ seo.canonical }}">
+    <meta property="og:locale" content="{{ t.og_locale }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ t.title }}">
+    <meta name="twitter:description" content="{{ t.seo_description }}">
+
     <link rel="stylesheet" href="/static/style.css">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "StardustFS",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "description": {{ t.seo_description | tojson }},
+        "url": {{ seo.canonical | tojson }},
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
 </head>
 <body>
     <header>

@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
+    # SEO — canonical/og:url용 절대 도메인. 비우면 요청 host에서 추론.
+    # 예: STARDUST_SITE_URL=https://stardustfs.example.com
+    site_url: str = ""
+
     # 데이터베이스
     database_url: str = "data/stardustfs.db"
 

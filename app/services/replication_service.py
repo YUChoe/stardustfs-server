@@ -1,6 +1,6 @@
 """리플리케이션(암호화 패리티 백업) 제어 서비스.
 
-위치 레지스트리(chunks/replicas) + 호혜 회계(hosting) + 배치(placement) + 건강성.
+위치 레지스트리(chunks/replicas) + 상호 보관 회계(hosting) + 배치(placement) + 건강성.
 zero-knowledge: 청크 내용/키는 저장하지 않고 위치/크기/회계 메타데이터만 다룬다.
 """
 
@@ -14,12 +14,12 @@ from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-# 호혜 쿼터 기본값(설정 미지정 시). 실제 값은 Settings에서 읽는다.
+# 상호 보관 한도 기본값(설정 미지정 시). 실제 값은 Settings에서 읽는다.
 RECIPROCITY_FRACTION = 0.5
 
 
 def _reciprocity_fraction() -> float:
-    """현재 호혜 비율(서버 설정값). placement와 /replication/policy가 공유한다."""
+    """현재 상호 보관 비율(서버 설정값). placement와 /replication/policy가 공유한다."""
     return get_settings().replication_reciprocity_fraction
 
 
@@ -27,7 +27,7 @@ class ReplicationService:
     def __init__(self, db: aiosqlite.Connection) -> None:
         self.db = db
 
-    # --- 호혜 회계 ---
+    # --- 상호 보관 회계 ---
 
     async def set_provided_bytes(
         self, user_id: str, device_id: str, provided_bytes: int
@@ -170,7 +170,7 @@ class ReplicationService:
     async def placement(
         self, user_id: str, size: int, count: int, exclude: list[str]
     ) -> list[dict]:
-        """용량·온라인·호혜를 고려해 ≤count개 홀더 후보를 선정한다.
+        """용량·온라인·상호 보관을 고려해 ≤count개 홀더 후보를 선정한다.
 
         가용 = provided_bytes*RECIPROCITY_FRACTION - hosted_bytes ≥ size 인 온라인
         디바이스 중 가용량 큰 순. exclude된 device_id는 제외.

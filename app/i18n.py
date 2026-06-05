@@ -4,7 +4,10 @@ from __future__ import annotations
 TRANSLATIONS: dict[str, dict[str, str]] = {
     "en": {
         "lang": "en-GB",
+        "og_locale": "en_GB",
         "title": "StardustFS - Your Files, Your Rules",
+        "seo_description": "StardustFS unifies the storage across your own devices into one end-to-end encrypted file space. Zero-knowledge privacy, peer-to-peer transfer, and mutual encrypted backup — no cloud server, no storage fees.",
+        "seo_keywords": "end-to-end encryption, zero-knowledge storage, peer-to-peer file transfer, private cloud, self-hosted storage, encrypted backup",
         "nav_signin": "Sign In",
         "nav_signup": "Sign Up",
         "nav_dashboard": "Dashboard",
@@ -166,7 +169,10 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     },
     "ko": {
         "lang": "ko",
+        "og_locale": "ko_KR",
         "title": "StardustFS - 내 파일, 내 규칙",
+        "seo_description": "StardustFS는 내 디바이스들의 저장 공간을 하나의 종단간 암호화 파일 공간으로 통합합니다. 제로지식 프라이버시, P2P 직접 전송, 암호화 상호 백업 — 클라우드 서버도, 용량 요금도 없습니다.",
+        "seo_keywords": "종단간 암호화, 제로지식 스토리지, P2P 파일 전송, 개인 클라우드, 셀프 호스팅 저장소, 암호화 백업",
         "nav_signin": "로그인",
         "nav_signup": "가입",
         "nav_dashboard": "대시보드",
@@ -184,7 +190,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "feature_storage_title": "내 저장소를 활용",
         "feature_storage_desc": "이미 가지고 있는 저장 공간을 사용하세요. 용량 요금 없이 내 하드 드라이브가 곧 클라우드입니다.",
         "feature_backup_title": "P2P 상호 백업",
-        "feature_backup_desc": "파일은 암호화된 청크로 나뉘어 P2P 피어 네트워크에 복제됩니다. 내 디바이스는 물론 호혜적으로 다른 사용자의 디바이스에도 보관됩니다. 서로 암호문을 맡아주므로 한 기기가 꺼지거나 분실돼도 데이터를 잃지 않으며, 보관하는 쪽은 복호화할 수 없는 청크만 가집니다 — 키는 오직 나에게 있습니다.",
+        "feature_backup_desc": "파일은 암호화된 청크로 나뉘어 P2P 피어 네트워크에 복제됩니다. 내 디바이스는 물론 서로 맡아주는 방식으로 다른 사용자의 디바이스에도 보관됩니다. 서로 암호문을 맡아주므로 한 기기가 꺼지거나 분실돼도 데이터를 잃지 않으며, 보관하는 쪽은 복호화할 수 없는 청크만 가집니다 — 키는 오직 나에게 있습니다.",
         "comparison_heading": "StardustFS vs 클라우드 저장소",
         "comparison_intro": "기존 클라우드 저장소는 파일을 남의 서버에 올리고 키도 그들이 보유합니다. StardustFS는 파일을 내 디바이스에 두고, 오직 나만 읽을 수 있도록 암호화합니다.",
         "col_feature": "항목",
@@ -253,7 +259,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "plan_free_f4": "암호화된 메타데이터 백업",
         "plan_free_f5": "커뮤니티 지원",
         "plan_free_f6": "파일을 총 2곳에 보관(원본 + 사본 1)",
-        "plan_free_f7": "타 사용자 데이터 최대 50% 호혜 보관",
+        "plan_free_f7": "타 사용자 데이터 최대 50% 상호 보관",
         "plan_pro_f1": "무제한 디바이스",
         "plan_pro_f2": "종단간 암호화",
         "plan_pro_f3": "P2P 파일 동기화",
@@ -261,7 +267,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "plan_pro_f5": "우선 지원",
         "plan_pro_f6": "고급 라우팅",
         "plan_pro_f7": "파일을 총 3곳에 보관(원본 + 사본 2)",
-        "plan_pro_f8": "호혜 보관 비율 축소",
+        "plan_pro_f8": "상호 보관 비율 축소",
         "plan_team_f1": "사용자당 무제한 디바이스",
         "plan_team_f2": "종단간 암호화",
         "plan_team_f3": "P2P 파일 동기화",
@@ -324,7 +330,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "faq_q6": "파일 크기 제한이 있나요?",
         "faq_a6": "없습니다. 파일이 디바이스 간 직접 전송되므로 업로드 제한이 없습니다. 유일한 제약은 본인의 저장 공간과 네트워크 속도입니다.",
         "faq_q7": "다른 사용자가 내 데이터를 보관하나요? 내가 남의 데이터를 볼 수 있나요?",
-        "faq_a7": "데이터 보호를 위해 암호화된 백업 청크가 P2P 피어 네트워크에 복제되며, 그 대가로 내 디바이스도 다른 사용자의 청크를 보관합니다. 보관하는 쪽은 내용을 전혀 볼 수 없습니다 — 모든 청크는 암호문이고 복호화 키는 소유자만 가집니다. 무료 계정은 백업 2벌을 유지하고 타 사용자 데이터를 최대 50%까지 호혜적으로 보관하며, 유료 계정은 백업 3벌에 보관 비율이 낮아지고, 엔터프라이즈/팀 계정은 백업 3벌 이상을 자기 팀 멤버끼리만 공유합니다.",
+        "faq_a7": "데이터 보호를 위해 암호화된 백업 청크가 P2P 피어 네트워크에 복제되며, 그 대가로 내 디바이스도 다른 사용자의 청크를 보관합니다. 보관하는 쪽은 내용을 전혀 볼 수 없습니다 — 모든 청크는 암호문이고 복호화 키는 소유자만 가집니다. 무료 계정은 백업 2벌을 유지하고 타 사용자 데이터를 최대 50%까지 상호 보관하며, 유료 계정은 백업 3벌에 보관 비율이 낮아지고, 엔터프라이즈/팀 계정은 백업 3벌 이상을 자기 팀 멤버끼리만 공유합니다.",
     },
 }
 

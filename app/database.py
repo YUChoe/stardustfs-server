@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS shares (
 
 CREATE INDEX IF NOT EXISTS idx_shares_owner ON shares(owner_user_id);
 
--- 리플리케이션(암호화 패리티 백업): 위치 레지스트리 + 호혜 회계 (zero-knowledge:
+-- 리플리케이션(암호화 패리티 백업): 위치 레지스트리 + 상호 보관 회계 (zero-knowledge:
 -- 청크 내용/키는 저장하지 않고 위치/크기/회계 메타데이터만 보관)
 CREATE TABLE IF NOT EXISTS hosting (
     device_id TEXT PRIMARY KEY REFERENCES devices(id) ON DELETE CASCADE,

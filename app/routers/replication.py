@@ -29,7 +29,7 @@ router = APIRouter(prefix="/replication", tags=["replication"])
 
 @router.get("/policy", response_model=ReplicationPolicy)
 async def get_policy(current_user: dict = Depends(get_current_user)):
-    """리플리케이션 정책(호혜 비율·목표 복제본 수)을 반환한다."""
+    """리플리케이션 정책(상호 보관 비율·목표 복제본 수)을 반환한다."""
     settings = get_settings()
     return ReplicationPolicy(
         reciprocity_fraction=settings.replication_reciprocity_fraction,

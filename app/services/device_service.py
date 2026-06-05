@@ -158,6 +158,72 @@ class DeviceService:
             )
         await self.db.commit()
 
+    async def replace_sources(
+        self, user_id: str, device_id: str, sources: list[dict]
+    ) -> None:
+        """device의 소스 인벤토리를 전량 교체한다(신고). 소유권 검증 포함.
+
+        Raises:
+            DeviceNotFoundError: device 미존재
+            DeviceAccessDeniedError: 소유권 불일치
+        """
+        cursor = await self.db.execute(
+            "SELECT id, user_id FROM devices WHERE id = ?", (device_id,)
+        )
+        row = await cursor.fetchone()
+        if row is None:
+            raise DeviceNotFoundError()
+        if row["user_id"] != user_id:
+            raise DeviceAccessDeniedError()
+
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        await self.db.execute(
+            "DELETE FROM device_sources WHERE device_id = ?", (device_id,)
+        )
+        for s in sources:
+            await self.db.execute(
+                "INSERT INTO device_sources (device_id, source_id, type, "
+                "capacity_bytes, used_bytes, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    device_id,
+                    s["source_id"],
+                    s["type"],
+                    int(s["capacity_bytes"]),
+                    int(s["used_bytes"]),
+                    now,
+                ),
+            )
+        await self.db.commit()
+        logger.info(
+            "Device sources updated: %d sources for device %s",
+            len(sources),
+            device_id,
+        )
+
+    async def list_all_sources(self, user_id: str) -> list[dict]:
+        """사용자의 모든 device 소스를 devices와 조인해 반환한다(is_online 실시간 판정)."""
+        cursor = await self.db.execute(
+            "SELECT ds.device_id, d.name AS device_name, ds.source_id, ds.type, "
+            "ds.capacity_bytes, ds.used_bytes, ds.updated_at, d.last_heartbeat "
+            "FROM device_sources ds JOIN devices d ON ds.device_id = d.id "
+            "WHERE d.user_id = ?",
+            (user_id,),
+        )
+        rows = await cursor.fetchall()
+        return [
+            {
+                "device_id": row["device_id"],
+                "device_name": row["device_name"],
+                "source_id": row["source_id"],
+                "type": row["type"],
+                "capacity_bytes": row["capacity_bytes"],
+                "used_bytes": row["used_bytes"],
+                "is_online": self.is_device_online(row["last_heartbeat"]),
+                "updated_at": row["updated_at"],
+            }
+            for row in rows
+        ]
+
     def is_device_online(self, last_heartbeat: str) -> bool:
         """last_heartbeat가 5분 이내인지 판단."""
         settings = get_settings()

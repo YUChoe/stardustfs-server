@@ -109,6 +109,20 @@ CREATE TABLE IF NOT EXISTS replicas (
 
 CREATE INDEX IF NOT EXISTS idx_replicas_chunk ON replicas(chunk_id);
 CREATE INDEX IF NOT EXISTS idx_replicas_holder ON replicas(holder_device_id);
+
+-- 디바이스 소스 레지스트리: 각 디바이스가 자신의 로컬 소스 인벤토리를 신고한다
+-- (zero-knowledge: 식별자/타입/용량/사용 바이트만, 물리 경로·파일명은 저장하지 않음).
+CREATE TABLE IF NOT EXISTS device_sources (
+    device_id TEXT NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
+    source_id TEXT NOT NULL,
+    type TEXT NOT NULL,
+    capacity_bytes INTEGER NOT NULL DEFAULT 0,
+    used_bytes INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (device_id, source_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_device_sources_device ON device_sources(device_id);
 """
 
 

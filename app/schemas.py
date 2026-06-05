@@ -94,6 +94,34 @@ class HeartbeatRequest(BaseModel):
     connection_address: str | None = None
 
 
+class DeviceSourceItem(BaseModel):
+    """디바이스 소스 인벤토리 항목(신고용). 경로·파일명 비포함(zero-knowledge)."""
+
+    source_id: str = Field(min_length=1)
+    type: str = Field(min_length=1)
+    capacity_bytes: int = Field(ge=0)
+    used_bytes: int = Field(ge=0)
+
+
+class DeviceSourcesReport(BaseModel):
+    """디바이스 소스 인벤토리 신고(전량 교체)."""
+
+    sources: list[DeviceSourceItem] = Field(default_factory=list)
+
+
+class DeviceSourceEntry(BaseModel):
+    """디바이스 소스 조회 응답 항목(디바이스 정보 조인)."""
+
+    device_id: str
+    device_name: str
+    source_id: str
+    type: str
+    capacity_bytes: int
+    used_bytes: int
+    is_online: bool
+    updated_at: str
+
+
 # === Sync 관련 ===
 
 

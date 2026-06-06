@@ -11,8 +11,9 @@ from __future__ import annotations
 import logging
 
 import aiosqlite
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
+from app.config import get_settings
 from app.dependencies import get_current_user, get_db
 from app.exceptions import DeviceAccessDeniedError, DeviceNotFoundError
 from app.schemas import (
@@ -45,6 +46,15 @@ def get_relay_hub(request: Request) -> RelayHub:
     return hub
 
 
+def _relay_permitted(current_user: dict) -> bool:
+    """이 사용자가 서버 릴레이를 쓸 수 있는지 상품 정책으로 판정한다.
+
+    현재는 전역 스위치(settings.relay_enabled)를 따른다. 향후 사용자 등급(plan)별
+    허가는 current_user의 plan을 조회해 여기서 분기한다(MVP4).
+    """
+    return get_settings().relay_enabled
+
+
 async def _device_owner(db: aiosqlite.Connection, device_id: str) -> str:
     """device_id의 소유자 user_id를 반환한다. 없으면 DeviceNotFoundError."""
     cursor = await db.execute(
@@ -68,7 +78,15 @@ async def submit_request(
     파일 op는 대상 디바이스 소유자가 요청자와 같은 user_id여야 한다(403). 복제본
     op(replica_*)는 상호 호스팅이므로 타 사용자 디바이스로도 허용한다(소유자=요청자
     인가는 홀더 ParityStore가 청크 단위로 집행). 대상 device 존재는 항상 확인한다.
+
+    릴레이는 서버 대역폭을 쓰는 최후 수단이므로 상품 정책으로 허가를 통제한다 —
+    허가되지 않은 사용자는 403으로 거부한다(클라이언트는 직접 P2P/스웜으로 귀결).
     """
+    if not _relay_permitted(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Relay not permitted by current plan",
+        )
     owner = await _device_owner(db, body.target_device_id)
     if body.op not in _REPLICA_OPS and owner != current_user["id"]:
         raise DeviceAccessDeniedError()

@@ -210,6 +210,23 @@ async def test_relay_poll_empty_204(
 
 
 @pytest.mark.asyncio
+async def test_relay_request_denied_when_policy_disabled(
+    client: AsyncClient, auth_headers: dict, monkeypatch
+):
+    """상품 정책으로 릴레이가 허가되지 않으면 POST /relay/request는 403."""
+    import app.routers.relay as relay_module
+
+    monkeypatch.setattr(relay_module, "_relay_permitted", lambda _u: False)
+    device_id = await _register_device(client, auth_headers, "gated-pc")
+    r = await client.post(
+        "/relay/request",
+        json={"target_device_id": device_id, "op": "read", "payload": {}},
+        headers=auth_headers,
+    )
+    assert r.status_code == 403
+
+
+@pytest.mark.asyncio
 async def test_relay_requires_auth(client: AsyncClient):
     """인증 없이 호출하면 401/403."""
     r = await client.post(

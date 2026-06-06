@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     replication_reciprocity_fraction: float = 0.5  # 제공 용량 중 타인 보관 허용 비율
     replication_min_replicas: int = 1              # 목표 복제본 수(원본 외 추가 사본)
 
+    # 릴레이 정책 — 서버 경유 P2P 릴레이는 서버 대역폭을 쓰는 최후 수단이므로 상품
+    # 정책으로 허가를 통제한다. 허가하지 않으면 POST /relay/request가 403으로 거부된다.
+    # 현재는 전역 스위치(운영 정책). 향후 사용자 등급(plan)별 허가는 여기에 끼운다.
+    relay_enabled: bool = True
+
     class Config:
         env_file = ".env"
         env_prefix = "STARDUST_"

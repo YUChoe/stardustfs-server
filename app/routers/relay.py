@@ -31,6 +31,10 @@ router = APIRouter(prefix="/relay", tags=["relay"])
 _POLL_TIMEOUT = 25.0
 _RESPONSE_TIMEOUT = 30.0
 
+# 복제본(패리티) op: 상호 호스팅이므로 타 사용자 디바이스로의 릴레이를 허용한다.
+# 소유자=요청자 인가는 홀더의 ParityStore가 청크 단위로 집행한다(서버는 불투명 중계).
+_REPLICA_OPS = frozenset({"replica_store", "replica_fetch", "replica_delete"})
+
 
 def get_relay_hub(request: Request) -> RelayHub:
     """app.state의 단일 RelayHub 인스턴스를 반환한다."""
@@ -61,10 +65,12 @@ async def submit_request(
 ) -> RelayRequestAccepted:
     """요청자가 대상 디바이스 앞으로 릴레이 요청을 적재한다.
 
-    대상 디바이스 소유자가 요청자와 같은 user_id여야 한다(403).
+    파일 op는 대상 디바이스 소유자가 요청자와 같은 user_id여야 한다(403). 복제본
+    op(replica_*)는 상호 호스팅이므로 타 사용자 디바이스로도 허용한다(소유자=요청자
+    인가는 홀더 ParityStore가 청크 단위로 집행). 대상 device 존재는 항상 확인한다.
     """
     owner = await _device_owner(db, body.target_device_id)
-    if owner != current_user["id"]:
+    if body.op not in _REPLICA_OPS and owner != current_user["id"]:
         raise DeviceAccessDeniedError()
 
     hub = get_relay_hub(request)

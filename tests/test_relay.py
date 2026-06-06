@@ -113,6 +113,42 @@ async def test_relay_request_cross_user_forbidden(
 
 
 @pytest.mark.asyncio
+async def test_relay_replica_op_cross_user_allowed(
+    client: AsyncClient, auth_headers: dict, db
+):
+    """복제본 op는 타 user_id 소유 디바이스로도 릴레이 큐잉이 허용된다(200).
+
+    상호 호스팅 — 소유자=요청자 인가는 홀더 ParityStore가 집행하므로 서버 릴레이는
+    교차 사용자를 막지 않는다.
+    """
+    device_id = await _register_device(client, auth_headers, "holder-pc")
+
+    pw = hash_password("otherpassword123")
+    cur = await db.execute(
+        "INSERT INTO users (email, password_hash) VALUES (?, ?) RETURNING id",
+        ("owner@example.com", pw),
+    )
+    other_id = (await cur.fetchone())["id"]
+    await db.commit()
+    other_headers = {
+        "Authorization": f"Bearer {create_access_token({'sub': other_id})}"
+    }
+
+    for op in ("replica_store", "replica_fetch", "replica_delete"):
+        r = await client.post(
+            "/relay/request",
+            json={
+                "target_device_id": device_id,
+                "op": op,
+                "payload": {"chunk_id": "c1", "auth_token": "owner-token"},
+            },
+            headers=other_headers,
+        )
+        assert r.status_code == 200, op
+        assert "request_id" in r.json()
+
+
+@pytest.mark.asyncio
 async def test_relay_request_unknown_device_404(
     client: AsyncClient, auth_headers: dict
 ):

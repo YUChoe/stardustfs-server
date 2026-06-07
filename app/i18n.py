@@ -19,7 +19,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "feature_privacy_title": "Zero-Knowledge Privacy",
         "feature_privacy_desc": "Your files are encrypted on your device before anything leaves it. We never see your data \u2014 not even the file names.",
         "feature_p2p_title": "Peer-to-Peer Transfer",
-        "feature_p2p_desc": "Files travel directly between your devices, with an encrypted relay fallback when networks block a direct link. No cloud server ever stores your data — no breaches, no surprise storage fees.",
+        "feature_p2p_desc": "Files travel directly between your devices — hole punching connects them straight through home routers and firewalls, with no port forwarding to set up. An encrypted relay steps in only when a direct link is truly impossible. No cloud server ever stores your data — no breaches, no surprise storage fees.",
         "feature_multi_title": "Multi-Device Access",
         "feature_multi_desc": "Register your laptop and desktop, then reach your files from any of them. Device routing is handled automatically.",
         "feature_storage_title": "You Own Your Storage",
@@ -175,6 +175,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "faq_a6": "No. Since files transfer directly between your devices, there are no upload limits imposed by us. The only constraint is your own storage and network capacity.",
         "faq_q7": "Do other users store my data, and can I read theirs?",
         "faq_a7": "For redundancy, your encrypted backup chunks are replicated across a peer network — and in return your device hosts other users' chunks. Nobody can read what they host: every chunk is ciphertext, and only the owner holds the decryption key. Free accounts keep 2 backup copies and host up to 50% of peers' data reciprocally; paid accounts get more copies with a lower or waived hosting ratio; Enterprise accounts keep 3+ copies shared only among their own members.",
+        "faq_q8": "Do I need to configure my router or set up port forwarding?",
+        "faq_a8": "No. StardustFS uses UDP hole punching to open a direct path between your devices straight through most home routers and firewalls — no port forwarding, no manual network setup. If a particularly strict network blocks even that, an encrypted relay carries the transfer instead, so it keeps working. Either way the server only ever sees ciphertext.",
     },
     "ko": {
         "lang": "ko",
@@ -193,7 +195,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "feature_privacy_title": "제로 지식 프라이버시",
         "feature_privacy_desc": "파일은 디바이스에서 암호화된 후 전송됩니다. 파일 이름조차 서버에서 볼 수 없습니다.",
         "feature_p2p_title": "P2P 전송",
-        "feature_p2p_desc": "파일은 디바이스 간 직접 이동하며, 네트워크가 직접 연결을 막으면 암호화된 릴레이로 우회합니다. 클라우드 서버에 데이터를 저장하지 않아 유출 위험도, 추가 요금도 없습니다.",
+        "feature_p2p_desc": "파일은 디바이스 간 직접 이동합니다. 홀펀칭으로 가정용 공유기·방화벽을 포트포워딩 설정 없이 그대로 통과하며, 직접 연결이 정말 불가능할 때만 암호화된 릴레이로 우회합니다. 클라우드 서버에 데이터를 저장하지 않아 유출 위험도, 추가 요금도 없습니다.",
         "feature_multi_title": "멀티 디바이스 접근",
         "feature_multi_desc": "노트북과 데스크톱을 등록하세요. 어떤 기기에서든 파일에 접근할 수 있고, 디바이스 라우팅은 자동 처리됩니다.",
         "feature_storage_title": "내 저장소를 활용",
@@ -349,6 +351,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "faq_a6": "없습니다. 파일이 디바이스 간 직접 전송되므로 업로드 제한이 없습니다. 유일한 제약은 본인의 저장 공간과 네트워크 속도입니다.",
         "faq_q7": "다른 사용자가 내 데이터를 보관하나요? 내가 남의 데이터를 볼 수 있나요?",
         "faq_a7": "데이터 보호를 위해 암호화된 백업 청크가 P2P 피어 네트워크에 복제되며, 그 대가로 내 디바이스도 다른 사용자의 청크를 보관합니다. 보관하는 쪽은 내용을 전혀 볼 수 없습니다 — 모든 청크는 암호문이고 복호화 키는 소유자만 가집니다. 무료 계정은 백업 2벌을 유지하고 타 사용자 데이터를 최대 50%까지 상호 보관하며, 유료 계정은 백업 사본이 늘고 보관 비율이 낮아지거나 면제되며, 엔터프라이즈 계정은 백업 3벌 이상을 자기 팀 멤버끼리만 공유합니다.",
+        "faq_q8": "공유기 설정이나 포트포워딩이 필요한가요?",
+        "faq_a8": "아니요. StardustFS는 UDP 홀펀칭으로 대부분의 가정용 공유기·방화벽을 그대로 통과해 디바이스 간 직접 경로를 엽니다 — 포트포워딩도, 수동 네트워크 설정도 필요 없습니다. 매우 엄격한 네트워크가 이마저 막으면 암호화된 릴레이가 대신 전송하므로 어떤 경우에도 동작합니다. 어느 경로든 서버는 암호문만 봅니다.",
     },
 }
 

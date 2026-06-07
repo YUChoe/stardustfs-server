@@ -1,0 +1,9 @@
+/* ============================================================
+   StardustFS — Webfonts
+   ------------------------------------------------------------
+   The product uses the NATIVE SYSTEM FONT STACK — there are no
+   webfonts to load (see tokens/typography.css --font-sans).
+   This file is intentionally empty of @font-face rules; it exists
+   so the import graph stays stable. If a brand face is ever
+   adopted, declare its @font-face here.
+   ============================================================ */

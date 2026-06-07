@@ -1,0 +1,27 @@
+/* ============================================================
+   StardustFS — Effects: elevation & motion
+   The product is flat: cards are defined by a 1px border on a
+   slightly lighter surface, not by shadow. Motion is minimal —
+   0.2s opacity / color transitions. No glow, no gradients.
+   ============================================================ */
+
+:root {
+  /* Elevation — used sparingly (menus, dialogs). Cards use borders. */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 0 rgba(1, 4, 9, 0.3);
+  --shadow-md: 0 8px 24px rgba(1, 4, 9, 0.5);
+  --shadow-lg: 0 16px 48px rgba(1, 4, 9, 0.65);
+
+  /* Focus ring (keyboard / input focus) */
+  --ring: 0 0 0 3px var(--focus-ring);
+
+  /* Motion — calm, utilitarian (matches product transitions) */
+  --ease-out:    ease; /* @kind other */
+  --ease-in-out: ease-in-out; /* @kind other */
+  --dur-fast:   150ms; /* @kind other */
+  --dur-base:   200ms; /* @kind other */
+  --dur-slow:   300ms; /* @kind other */
+
+  /* Interaction conventions (documented as tokens) */
+  --hover-opacity: 0.9; /* @kind other */
+}

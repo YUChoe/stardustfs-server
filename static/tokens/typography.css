@@ -1,0 +1,46 @@
+/* ============================================================
+   StardustFS — Typography tokens
+   The product uses the native system font stack (no webfonts) and
+   a 1.6 line-height. We keep a monospace alias for code/IDs.
+   ============================================================ */
+
+:root {
+  /* Families — exact product stack */
+  /* Native system stack (trimmed to widely-available members; renders
+     identically to the product's stack on virtually all platforms) */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  /* Display == sans (no separate display face in product) */
+  --font-display: var(--font-sans);
+
+  /* Weights */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* Type scale (rem, mapped to real product sizes) */
+  --text-hero:   2.5rem;   /* 40 — landing hero h1 */
+  --text-h1:     1.75rem;  /* 28 — section h2 / dashboard h1 */
+  --text-price:  2.25rem;  /* 36 — pricing amount */
+  --text-h2:     1.5rem;   /* 24 — auth h1 / logo */
+  --text-lg:     1.2rem;   /* ~19 — card h3 (pricing/dashboard) */
+  --text-lead:   1.15rem;  /* hero paragraph */
+  --text-md:     1.1rem;   /* feature h3 */
+  --text-base:   1rem;     /* 16 — body / faq */
+  --text-sm:     0.95rem;  /* 15 — nav, buttons, inputs */
+  --text-xs:     0.9rem;   /* 14 — card body, list items */
+  --text-2xs:    0.85rem;  /* 13.6 — captions, table head, footer */
+  --text-3xs:    0.8rem;   /* 12.8 — status pills, hb */
+
+  /* Line heights */
+  --leading-tight:   1.25;
+  --leading-normal:  1.6;   /* product default */
+  --leading-relaxed: 1.7;
+
+  /* Letter spacing */
+  --tracking-tight:  -0.01em;
+  --tracking-normal: 0;
+  --tracking-caps:   0.03em; /* table-head uppercase */
+}

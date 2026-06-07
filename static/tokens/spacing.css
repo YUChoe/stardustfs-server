@@ -1,0 +1,44 @@
+/* ============================================================
+   StardustFS — Spacing, radii, sizing
+   rem-based spacing (the product works in rem); GitHub-style radii.
+   ============================================================ */
+
+:root {
+  /* Spacing scale (rem) */
+  --space-0:  0;
+  --space-1:  0.25rem;  /* 4  */
+  --space-2:  0.5rem;   /* 8  */
+  --space-3:  0.75rem;  /* 12 */
+  --space-4:  1rem;     /* 16 */
+  --space-5:  1.25rem;  /* 20 */
+  --space-6:  1.5rem;   /* 24 — card padding, grid gap */
+  --space-8:  2rem;     /* 32 — pricing card padding */
+  --space-10: 2.5rem;   /* 40 — section heading gap */
+  --space-12: 3rem;     /* 48 */
+  --space-16: 4rem;     /* 64 — section padding */
+  --space-20: 5rem;     /* 80 — hero top padding */
+
+  /* Radii — GitHub Primer */
+  --radius-sm:  4px;   /* lang pill, tags */
+  --radius-md:  6px;   /* buttons, inputs */
+  --radius-lg:  8px;   /* cards */
+  --radius-pill: 10px; /* status badges (Primer uses 10px, near-pill) */
+  --radius-full: 999px;
+
+  /* Container widths (product container = 960px) */
+  --container: 960px;
+  --container-sm: 700px; /* faq list */
+  --container-narrow: 400px; /* auth card */
+
+  /* Control sizing */
+  --control-h-sm: 32px;
+  --control-h-md: 40px;
+  --control-h-lg: 46px;
+
+  /* Z-index ladder */
+  --z-base:   1;     /* @kind other */
+  --z-sticky: 100;   /* @kind other */
+  --z-overlay:900;   /* @kind other */
+  --z-modal:  1000;  /* @kind other */
+  --z-toast:  1100;  /* @kind other */
+}

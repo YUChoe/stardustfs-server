@@ -1,0 +1,13 @@
+/* ============================================================
+   StardustFS — Design tokens entry point
+   .design_system_v1에서 가져온 토큰(:root CSS 변수)을 모은다. style.css보다
+   먼저 로드해 색·타이포·간격·효과 변수를 제공한다(현재 style.css는 하드코딩
+   값을 유지하며, 신규/변경 스타일은 이 변수를 참조해 단일 소스로 수렴시킨다).
+   base.css(요소 리셋)는 style.css의 기존 리셋과 충돌하므로 제외한다.
+   ============================================================ */
+
+@import "tokens/colors.css";
+@import "tokens/typography.css";
+@import "tokens/spacing.css";
+@import "tokens/effects.css";
+@import "tokens/fonts.css";

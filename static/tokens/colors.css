@@ -1,0 +1,73 @@
+/* ============================================================
+   StardustFS — Color tokens
+   Source of truth: the product's static/style.css (a GitHub
+   "Primer" dark theme). Near-black canvas, GitHub-blue brand /
+   links, green primary CTA, restrained neutrals.
+   Brand origin note: the *name* nods to Rogue One's Imperial
+   archive ("Stardust"), but the product UI is clean & utilitarian.
+   ============================================================ */
+
+:root {
+  /* ---- Canvas & surfaces (exact product values) ---- */
+  --canvas:         #0d1117; /* body / page background, input bg */
+  --canvas-inset:   #010409; /* deepest wells (optional) */
+  --surface:        #161b22; /* cards, table header, hover rows */
+  --surface-hover:  #1c222b; /* subtle raised hover */
+
+  /* ---- Borders ---- */
+  --border-muted:   #21262d; /* card borders, dividers, table lines */
+  --border-default: #30363d; /* inputs, secondary buttons, lang pill */
+
+  /* ---- Neutral text ramp ---- */
+  --fg-strong:  #f0f6fc; /* headings */
+  --fg-default: #e0e0e0; /* body text */
+  --fg-muted:   #c9d1d9; /* labels, secondary-button text */
+  --fg-subtle:  #8b949e; /* secondary / descriptive text */
+  --fg-faint:   #6e7681; /* timestamps, hints */
+  --fg-disabled:#484f58; /* footer, disabled */
+
+  /* ---- Brand / accent: GitHub blue ---- */
+  --accent:       #58a6ff; /* logo, links, feature titles, focus, featured */
+  --accent-hover: #79b8ff;
+  --accent-muted: #1f6feb;
+  --accent-subtle: rgba(88, 166, 255, 0.12);
+
+  /* ---- Primary action: green ---- */
+  --success-emphasis: #238636; /* primary button bg */
+  --success-emphasis-hover: #2ea043;
+  --success:        #3fb950;   /* success text / checkmarks */
+  --success-border: #2ea043;
+  --success-subtle: #1f3d2a;   /* success message bg */
+
+  /* ---- Danger: red ---- */
+  --danger:         #f85149;   /* danger text */
+  --danger-border:  #6e3030;
+  --danger-subtle:  #3d1f1f;   /* danger button / error bg */
+  --danger-hover:   #4d2525;   /* danger button hover */
+
+  /* ============================================================
+     SEMANTIC ALIASES — prefer these in product UI
+     ============================================================ */
+
+  /* Surfaces */
+  --bg-app:        var(--canvas);
+  --surface-card:  var(--surface);
+  --surface-raised:var(--surface-hover);
+
+  /* Text */
+  --text-primary:   var(--fg-default);
+  --text-heading:   var(--fg-strong);
+  --text-secondary: var(--fg-subtle);
+  --text-muted:     var(--fg-faint);
+  --text-label:     var(--fg-muted);
+  --text-inverse:   #ffffff;
+  --text-link:      var(--accent);
+
+  /* Borders */
+  --border-subtle:  var(--border-muted);
+  --border-strong:  var(--border-default);
+  --border-accent:  var(--accent);
+
+  /* Focus */
+  --focus-ring:     rgba(88, 166, 255, 0.4);
+}
